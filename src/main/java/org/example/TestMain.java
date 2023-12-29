@@ -80,7 +80,7 @@ public class TestMain {
         System.arraycopy(packet5, 0, packet_r, packet1.length + 4 + packet2.length + 4 + packet3.length + 4 + packet4.length + 4, packet5.length);
 
         System.out.println(Convert.toHex(packet_r).equals(  // 与标准值比较
-                "ffffffffffffffffffffffffffffffff001d010401f400b4c0a80a0100" + "00000000" +
+                "ffffffffffffffffffffffffffffffff0031010401f400b4c0a80a011402060104000100010202020002064104000001f4" + "00000000" +
                 "ffffffffffffffffffffffffffffffff001304" + "00000000" +
                 "ffffffffffffffffffffffffffffffff003402000000194001010040020402010064400304c0a80a0580040400000000180a0000" + "00000000" +
                 "ffffffffffffffffffffffffffffffff001b020004180b00000000" + "00000000" +
@@ -107,7 +107,7 @@ public class TestMain {
 
         // 比较
         System.out.println(Convert.toHex(packet_r2_cut).equals(
-                "ffffffffffffffffffffffffffffffff001d010401f400b4c0a80a0100" +
+                "ffffffffffffffffffffffffffffffff0031010401f400b4c0a80a011402060104000100010202020002064104000001f4" +
                 "ffffffffffffffffffffffffffffffff001304" +
                 "ffffffffffffffffffffffffffffffff003402000000194001010040020402010064400304c0a80a0580040400000000180a0000" +
                 "ffffffffffffffffffffffffffffffff001b020004180b00000000" +

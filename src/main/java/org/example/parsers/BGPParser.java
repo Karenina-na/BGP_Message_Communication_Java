@@ -8,6 +8,7 @@ import org.example.message.BGPType;
 import org.example.parsers.keeplive.BGPKeepLiveParser;
 import org.example.parsers.notification.BGPNotificationParser;
 import org.example.parsers.open.BGPOpenParser;
+import org.example.parsers.refresh.BGPRefreshParser;
 import org.example.parsers.update.BGPUpdateParser;
 
 import java.util.Vector;
@@ -33,6 +34,9 @@ public class BGPParser {
                     break;
                 case KEEPALIVE:
                     result.add(BGPKeepLiveParser.parse(pkt));
+                    break;
+                case REFRESH:
+                    result.add(BGPRefreshParser.parse(pkt));
                     break;
                 default:
                     LOGGER.error("Unknown BGP packet type");
@@ -98,6 +102,8 @@ public class BGPParser {
                 return BGPType.NOTIFICATION;
             case 4:
                 return BGPType.KEEPALIVE;
+            case 5:
+                return BGPType.REFRESH;
             default:
                 return BGPType.UNKNOWN;
         }
