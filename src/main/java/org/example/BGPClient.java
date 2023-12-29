@@ -8,6 +8,9 @@ import org.example.message.notification.BGPNotification;
 import org.example.message.notification.BGPNotificationErrorCode;
 import org.example.message.notification.BGPNotificationSubErrorCode;
 import org.example.message.open.BGPOpen;
+import org.example.message.open.open_opt.BGPOpen4OctAsNumberCap;
+import org.example.message.open.open_opt.BGPOpenOptMultiprotocolExtCap;
+import org.example.message.open.open_opt.BGPOpenOptRouterRefreshCap;
 import org.example.message.update.BGPUpdate;
 import org.example.message.update.BGPUpdateNLRI;
 import org.example.message.update.path_attr.BGPUpdateAttrAS_PATH;
@@ -50,7 +53,14 @@ public class BGPClient {
         Vector<BGPPkt> result;
 
         // open
-        BGPOpen open = new BGPOpen(4, src_asn, 180, src_ip, 0, null);
+//        BGPOpen open = new BGPOpen(4, src_asn, 180, src_ip, null);
+        BGPOpen open = new BGPOpen(4, src_asn, 180, src_ip,
+                new Vector<>(){{
+                    add(new BGPOpenOptMultiprotocolExtCap(1, 1));
+                    add(new BGPOpenOptRouterRefreshCap());
+                    add(new BGPOpen4OctAsNumberCap(500));
+                }}
+        );
         socket.getOutputStream().write(open.build_packet());
         do {
             buffer = pipe.poll();

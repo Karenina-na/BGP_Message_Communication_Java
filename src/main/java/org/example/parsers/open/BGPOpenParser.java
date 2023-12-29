@@ -50,6 +50,6 @@ public class BGPOpenParser{
         byte[] optPara = new byte[optLen];
         System.arraycopy(packet, 29, optPara, 0, optLen);
 
-        return new BGPOpen(version, asn, holdTime, id.toString(), optLen, BGPOpenPathOptParser.parse(optPara));
+        return new BGPOpen(version, asn, holdTime, id.toString(), BGPOpenPathOptParser.parse(optPara));
     }
 }

@@ -1,11 +1,10 @@
 package org.example.message.open;
 
-import cn.hutool.core.convert.Convert;
 import cn.hutool.core.date.DateUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.example.message.BGPPkt;
-import org.example.message.open.BGPOpenOpt;
+import org.example.message.open.open_opt.BGPOpenOpt;
 
 import java.util.Vector;
 
@@ -16,16 +15,14 @@ public class BGPOpen implements BGPPkt {
     private final int asn;
     private final int holdTime;
     private final String id;
-    private final int optLen;
     private final Vector<BGPOpenOpt> optPara;
     protected static final Logger LOGGER = LogManager.getLogger(LogManager.ROOT_LOGGER_NAME);
 
-    public BGPOpen(int version, int asn, int holdTime, String id, int optLen, Vector<BGPOpenOpt> optPara) {
+    public BGPOpen(int version, int asn, int holdTime, String id, Vector<BGPOpenOpt> optPara) {
         this.version = version;
         this.asn = asn;
         this.holdTime = holdTime;
         this.id = id;
-        this.optLen = optLen;
         this.optPara = optPara;
         for (int i = 0; i < 16; i++) {
             marker[i] = (byte) 0xff;
@@ -45,6 +42,12 @@ public class BGPOpen implements BGPPkt {
         id: 4 bytes
         optLen: 1 byte
         * */
+        int optLen = 0;
+        if (optPara != null) {
+            for (BGPOpenOpt opt : optPara) {
+                optLen += opt.build_packet().length;
+            }
+        }
         byte[] packet = new byte[29 + optLen];
         // marker  0xff * 16
         System.arraycopy(marker, 0, packet, 0, 16);
@@ -88,6 +91,12 @@ public class BGPOpen implements BGPPkt {
         s += "ASN: " + asn + "\n";
         s += "Hold Time: " + holdTime + "\n";
         s += "ID: " + id + "\n";
+        int optLen = 0;
+        if (optPara != null) {
+            for (BGPOpenOpt opt : optPara) {
+                optLen += opt.build_packet().length;
+            }
+        }
         s += "Optional Parameters Length Len: " + optLen + "\n";
         s += "Optional Parameters: \n";
         if (optLen != 0) {
