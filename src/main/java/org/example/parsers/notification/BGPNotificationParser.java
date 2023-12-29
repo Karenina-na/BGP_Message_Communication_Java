@@ -4,6 +4,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.example.message.keeplive.BGPKeepLive;
 import org.example.message.notification.BGPNotification;
+import org.example.message.notification.BGPNotificationErrorCode;
+import org.example.message.notification.BGPNotificationSubErrorCode;
 
 public class BGPNotificationParser {
     protected static final Logger LOGGER = LogManager.getLogger(LogManager.ROOT_LOGGER_NAME);
@@ -21,6 +23,7 @@ public class BGPNotificationParser {
             return null;
         }
 
-        return new BGPNotification(packet[19], packet[20]);
+        return new BGPNotification(BGPNotificationErrorCode.fromValue(packet[19]),
+                BGPNotificationSubErrorCode.fromValue(BGPNotificationErrorCode.fromValue(packet[19]), packet[20]));
     }
 }

@@ -5,6 +5,8 @@ import cn.hutool.core.lang.func.VoidFunc0;
 import org.example.message.BGPPkt;
 import org.example.message.keeplive.BGPKeepLive;
 import org.example.message.notification.BGPNotification;
+import org.example.message.notification.BGPNotificationErrorCode;
+import org.example.message.notification.BGPNotificationSubErrorCode;
 import org.example.message.open.BGPOpen;
 import org.example.message.update.BGPUpdate;
 import org.example.message.update.BGPUpdateNLRI;
@@ -13,12 +15,8 @@ import org.example.message.update.path_attr.BGPUpdateAttrMED;
 import org.example.message.update.path_attr.BGPUpdateAttrNEXT_HOP;
 import org.example.message.update.path_attr.BGPUpdateAttrORIGIN;
 import org.example.parsers.BGPParser;
-import org.example.parsers.keeplive.BGPKeepLiveParser;
-import org.example.parsers.open.BGPOpenParser;
 
 import java.io.IOException;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.Queue;
@@ -75,9 +73,6 @@ public class BGPClient {
             System.out.println(pkt.to_string());
         }
 
-        // keep live for update
-        socket.getOutputStream().write(keepLive.build_packet());
-
         // update
         BGPUpdate bgp_up = new BGPUpdate(false,
                 new Vector<>(){{
@@ -85,11 +80,11 @@ public class BGPClient {
                     add(new BGPUpdateAttrAS_PATH((byte) 0x40, new Vector<>(){{  // AS_PATH
                         add(src_asn);
                     }}));
-                    add(new BGPUpdateAttrNEXT_HOP((byte) 0x40, "192.168.10.5"));  // NEXT_HOP
+                    add(new BGPUpdateAttrNEXT_HOP((byte) 0x40, "192.168.10.1"));  // NEXT_HOP
                     add(new BGPUpdateAttrMED((byte) 0x80, 0));  // Multi Exit Disc
                 }},
                 new Vector<>(){{
-                    add(new BGPUpdateNLRI(24, "10.0.0.0")); // NLRI
+                    add(new BGPUpdateNLRI(24, "12.0.0.0")); // NLRI
                 }}
         );
         socket.getOutputStream().write(bgp_up.build_packet());
@@ -102,8 +97,25 @@ public class BGPClient {
             System.out.println(pkt.to_string());
         }
 
+        // update
+        BGPUpdate bgp_up_draw = new BGPUpdate(true,
+                new Vector<>(), // no path attr
+                new Vector<>(){{
+                    add(new BGPUpdateNLRI(24, "12.0.0.0")); // withdrawn
+                }}
+        );
+        socket.getOutputStream().write(bgp_up_draw.build_packet());
+        do {
+            buffer = pipe.poll();
+            Thread.sleep(1);
+        } while (buffer == null);
+        result = BGPParser.parse(buffer);   // keep live
+        for (BGPPkt pkt : result) {
+            System.out.println(pkt.to_string());
+        }
+
         // notification
-        BGPNotification bgp_nt = new BGPNotification(3, 11);
+        BGPNotification bgp_nt = new BGPNotification(BGPNotificationErrorCode.UPDATEMessageError, BGPNotificationSubErrorCode.MalformedASPath);
         socket.getOutputStream().write(bgp_nt.build_packet());
         do {
             buffer = pipe.poll();
@@ -122,6 +134,7 @@ public class BGPClient {
             try {
                 int len = socket.getInputStream().read(buffer);
                 if (len == -1){
+                    pipe.add(new String("Socket closed").getBytes());
                     break;
                 }
                 pipe.add(buffer);

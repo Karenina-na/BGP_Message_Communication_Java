@@ -4,6 +4,8 @@ import cn.hutool.core.convert.Convert;
 import org.example.message.BGPPkt;
 import org.example.message.keeplive.BGPKeepLive;
 import org.example.message.notification.BGPNotification;
+import org.example.message.notification.BGPNotificationErrorCode;
+import org.example.message.notification.BGPNotificationSubErrorCode;
 import org.example.message.open.BGPOpen;
 import org.example.message.update.*;
 import org.example.message.update.path_attr.BGPUpdateAttrAS_PATH;
@@ -53,7 +55,8 @@ public class TestMain {
         );
         byte[] packet4 = bgp_up_draw.build_packet();
 
-        BGPNotification bgp_nt = new BGPNotification(6, 5);
+//        BGPNotification bgp_nt = new BGPNotification(6, 5);
+        BGPNotification bgp_nt = new BGPNotification(BGPNotificationErrorCode.Cease, BGPNotificationSubErrorCode.ConnectionRejected);
         byte[] packet5 = bgp_nt.build_packet();
 
 
