@@ -80,6 +80,7 @@ public class BGPOpen implements BGPPkt {
                 offset += optBytes.length;
             }
         }
+
         return packet;
     }
 

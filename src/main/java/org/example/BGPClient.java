@@ -11,6 +11,7 @@ import org.example.message.open.BGPOpen;
 import org.example.message.open.open_opt.BGPOpen4OctAsNumberCap;
 import org.example.message.open.open_opt.BGPOpenOptMultiprotocolExtCap;
 import org.example.message.open.open_opt.BGPOpenOptRouterRefreshCap;
+import org.example.message.refresh.BGPRefresh;
 import org.example.message.update.BGPUpdate;
 import org.example.message.update.BGPUpdateNLRI;
 import org.example.message.update.path_attr.BGPUpdateAttrAS_PATH;
@@ -53,7 +54,6 @@ public class BGPClient {
         Vector<BGPPkt> result;
 
         // open
-//        BGPOpen open = new BGPOpen(4, src_asn, 180, src_ip, null);
         BGPOpen open = new BGPOpen(4, src_asn, 180, src_ip,
                 new Vector<>(){{
                     add(new BGPOpenOptMultiprotocolExtCap(1, 1));
@@ -107,6 +107,9 @@ public class BGPClient {
             System.out.println(pkt.to_string());
         }
 
+        // 等待 5 s
+        Thread.sleep(5000);
+
         // update
         BGPUpdate bgp_up_draw = new BGPUpdate(true,
                 new Vector<>(), // no path attr
@@ -123,6 +126,32 @@ public class BGPClient {
         for (BGPPkt pkt : result) {
             System.out.println(pkt.to_string());
         }
+
+        // 等待 10 s
+        Thread.sleep(10000);
+
+        // send refresh
+        BGPRefresh bgp_rf = new BGPRefresh(1, 1);
+        socket.getOutputStream().write(bgp_rf.build_packet());
+        do {
+            buffer = pipe.poll();
+            Thread.sleep(1);
+        } while (buffer == null);
+        result = BGPParser.parse(buffer);
+        for (BGPPkt pkt : result) {
+            System.out.println(pkt.to_string());    // keep live
+        }
+        do {
+            buffer = pipe.poll();
+            Thread.sleep(1);
+        } while (buffer == null);
+        result = BGPParser.parse(buffer);   // two update
+        for (BGPPkt pkt : result) {
+            System.out.println(pkt.to_string());
+        }
+
+        // 等待 10 s
+        Thread.sleep(10000);
 
         // notification
         BGPNotification bgp_nt = new BGPNotification(BGPNotificationErrorCode.UPDATEMessageError, BGPNotificationSubErrorCode.MalformedASPath);

@@ -10,6 +10,7 @@ import org.example.message.open.BGPOpen;
 import org.example.message.open.open_opt.BGPOpen4OctAsNumberCap;
 import org.example.message.open.open_opt.BGPOpenOptMultiprotocolExtCap;
 import org.example.message.open.open_opt.BGPOpenOptRouterRefreshCap;
+import org.example.message.refresh.BGPRefresh;
 import org.example.message.update.*;
 import org.example.message.update.path_attr.BGPUpdateAttrAS_PATH;
 import org.example.message.update.path_attr.BGPUpdateAttrMED;
@@ -64,13 +65,15 @@ public class TestMain {
         );
         byte[] packet4 = bgp_up_draw.build_packet();
 
-//        BGPNotification bgp_nt = new BGPNotification(6, 5);
         BGPNotification bgp_nt = new BGPNotification(BGPNotificationErrorCode.Cease, BGPNotificationSubErrorCode.ConnectionRejected);
         byte[] packet5 = bgp_nt.build_packet();
 
+        BGPRefresh bgp_rf = new BGPRefresh(1, 1);
+        byte[] packet6 = bgp_rf.build_packet();
 
         // 构造一个 BGP 包
-        byte[] packet_r = new byte[packet1.length + 4 +packet2.length + 4 + packet3.length + 4 + packet4.length + 4 + packet5.length];
+        byte[] packet_r = new byte[packet1.length + 4 +packet2.length + 4 + packet3.length + 4 +
+                packet4.length + 4 + packet5.length + 4 + packet6.length];
 
         // 拼接
         System.arraycopy(packet1, 0, packet_r, 0, packet1.length);
@@ -78,13 +81,15 @@ public class TestMain {
         System.arraycopy(packet3, 0, packet_r, packet1.length + 4 + packet2.length + 4, packet3.length);
         System.arraycopy(packet4, 0, packet_r, packet1.length + 4 + packet2.length + 4 + packet3.length + 4, packet4.length);
         System.arraycopy(packet5, 0, packet_r, packet1.length + 4 + packet2.length + 4 + packet3.length + 4 + packet4.length + 4, packet5.length);
+        System.arraycopy(packet6, 0, packet_r, packet1.length + 4 + packet2.length + 4 + packet3.length + 4 + packet4.length + 4 + packet5.length + 4, packet6.length);
 
         System.out.println(Convert.toHex(packet_r).equals(  // 与标准值比较
-                "ffffffffffffffffffffffffffffffff001d010401f400b4c0a80a0100" + "00000000" +
+                "ffffffffffffffffffffffffffffffff0031010401f400b4c0a80a011402060104000100010202020002064104000001f4" + "00000000" +
                 "ffffffffffffffffffffffffffffffff001304" + "00000000" +
                 "ffffffffffffffffffffffffffffffff003402000000194001010040020402010064400304c0a80a0580040400000000180a0000" + "00000000" +
                 "ffffffffffffffffffffffffffffffff001b020004180b00000000" + "00000000" +
-                "ffffffffffffffffffffffffffffffff0015030605"
+                "ffffffffffffffffffffffffffffffff0015030605" + "00000000" +
+                "ffffffffffffffffffffffffffffffff00170500010001"
         ));
 
 
@@ -95,7 +100,7 @@ public class TestMain {
         }
 
         // 再次构造
-        byte[] packet_r2 = new byte[packet1.length + packet2.length + packet3.length + packet4.length + packet5.length];
+        byte[] packet_r2 = new byte[packet1.length + packet2.length + packet3.length + packet4.length + packet5.length + packet6.length];
         int pointer = 0;
         for (BGPPkt pkt : result) {
             byte[] pkt_bytes = pkt.build_packet();
@@ -107,11 +112,12 @@ public class TestMain {
 
         // 比较
         System.out.println(Convert.toHex(packet_r2_cut).equals(
-                "ffffffffffffffffffffffffffffffff001d010401f400b4c0a80a0100" +
+                "ffffffffffffffffffffffffffffffff0031010401f400b4c0a80a011402060104000100010202020002064104000001f4" +
                 "ffffffffffffffffffffffffffffffff001304" +
                 "ffffffffffffffffffffffffffffffff003402000000194001010040020402010064400304c0a80a0580040400000000180a0000" +
                 "ffffffffffffffffffffffffffffffff001b020004180b00000000" +
-                "ffffffffffffffffffffffffffffffff0015030605"
+                "ffffffffffffffffffffffffffffffff0015030605" +
+                "ffffffffffffffffffffffffffffffff00170500010001"
         ));
     }
 }

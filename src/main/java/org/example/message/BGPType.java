@@ -7,6 +7,7 @@ public enum BGPType {
     UPDATE(2),
     NOTIFICATION(3),
     KEEPALIVE(4),
+    REFRESH(5),
     UNKNOWN(0);
 
     private final int value;
