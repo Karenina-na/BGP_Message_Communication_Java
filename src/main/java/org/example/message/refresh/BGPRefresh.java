@@ -57,8 +57,8 @@ public class BGPRefresh implements BGPPkt {
     public String to_string() {
         String s = "REFRESH Message ====================== " + time + "\n";
         s += "Length: " + build_packet().length + "\n";
-        s += "AFI: " + afi + "\n";
-        s += "SAFI: " + safi + "\n";
+        s += "Address Family Identifier: " + afi + "\n";
+        s += "Subsequent Address Family Identifier: " + safi + "\n";
         return s;
     }
 }

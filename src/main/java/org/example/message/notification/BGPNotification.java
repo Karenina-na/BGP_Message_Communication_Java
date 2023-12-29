@@ -47,8 +47,8 @@ public class BGPNotification implements BGPPkt {
     public String to_string() {
         String s = "Notification Message ====================== " + time + "\n";
         s += "Length: " + build_packet().length + "\n";
-        s += "Major error code: " + major_error_code + "\n";
-        s += "Minor error code: " + minor_error_code + "\n";
+        s += "Major error code: " + major_error_code + " (" + major_error_code.getValue() + ")" + "\n";
+        s += "Minor error code: " + minor_error_code + " (" + minor_error_code.getValue() + ")" + "\n";
         return s;
     }
 }
