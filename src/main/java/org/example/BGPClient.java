@@ -1,7 +1,5 @@
 package org.example;
 
-import cn.hutool.core.convert.Convert;
-import cn.hutool.core.lang.func.VoidFunc0;
 import org.example.message.BGPPkt;
 import org.example.message.keeplive.BGPKeepLive;
 import org.example.message.notification.BGPNotification;
