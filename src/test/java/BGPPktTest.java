@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
-public class BGPTest {
+public class BGPPktTest {
 
     // open
     private final BGPOpen bgp_op = new BGPOpen(4, 500, 180, "192.168.10.1",

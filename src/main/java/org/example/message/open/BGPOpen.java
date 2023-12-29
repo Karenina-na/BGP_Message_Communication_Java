@@ -7,6 +7,7 @@ import org.example.message.open.open_opt.BGPOpenOpt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.Vector;
 
 public class BGPOpen implements BGPPkt {
@@ -109,5 +110,10 @@ public class BGPOpen implements BGPPkt {
             s = sBuilder.toString();
         }
         return s;
+    }
+
+    @Override
+    public void write_to_xml(String path) throws IOException {
+
     }
 }

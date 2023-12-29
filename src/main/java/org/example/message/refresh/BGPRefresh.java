@@ -6,6 +6,8 @@ import org.example.message.BGPPkt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+
 public class BGPRefresh implements BGPPkt {
     private final String time;
     private final byte[] marker = new byte[16];
@@ -61,5 +63,10 @@ public class BGPRefresh implements BGPPkt {
         s += "Address Family Identifier: " + afi + "\n";
         s += "Subsequent Address Family Identifier: " + safi + "\n";
         return s;
+    }
+
+    @Override
+    public void write_to_xml(String path) throws IOException {
+
     }
 }

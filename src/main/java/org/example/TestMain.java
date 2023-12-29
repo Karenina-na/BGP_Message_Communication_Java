@@ -17,13 +17,16 @@ import org.example.message.update.path_attr.BGPUpdateAttrMED;
 import org.example.message.update.path_attr.BGPUpdateAttrNEXT_HOP;
 import org.example.message.update.path_attr.BGPUpdateAttrORIGIN;
 import org.example.parsers.BGPParser;
+import org.xml.sax.SAXException;
 
+import java.io.IOException;
 import java.util.Vector;
 
 public class TestMain {
 
 
-    public static void main(String[] args) {
-        System.out.println("Hello World!");
+    public static void main(String[] args) throws IOException, SAXException {
+        BGPKeepLive keepLive = new BGPKeepLive();
+        keepLive.write_to_xml("keep_live.xml");
     }
 }

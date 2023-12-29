@@ -3,6 +3,8 @@ package org.example.message.notification;
 import cn.hutool.core.date.DateUtil;
 import org.example.message.BGPPkt;
 
+import java.io.IOException;
+
 public class BGPNotification implements BGPPkt {
     private final String time;
     private final byte[] marker = new byte[16];
@@ -50,5 +52,10 @@ public class BGPNotification implements BGPPkt {
         s += "Major error code: " + major_error_code + " (" + major_error_code.getValue() + ")" + "\n";
         s += "Minor error code: " + minor_error_code + " (" + minor_error_code.getValue() + ")" + "\n";
         return s;
+    }
+
+    @Override
+    public void write_to_xml(String path) throws IOException {
+
     }
 }

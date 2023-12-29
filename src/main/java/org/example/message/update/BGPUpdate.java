@@ -4,6 +4,7 @@ import cn.hutool.core.date.DateUtil;
 import org.example.message.BGPPkt;
 import org.example.message.update.path_attr.BGPUpdatePathAttr;
 
+import java.io.IOException;
 import java.util.Vector;
 
 public class BGPUpdate implements BGPPkt {
@@ -138,5 +139,10 @@ public class BGPUpdate implements BGPPkt {
         }
         s = sBuilder.toString();
         return s;
+    }
+
+    @Override
+    public void write_to_xml(String path) throws IOException {
+
     }
 }
