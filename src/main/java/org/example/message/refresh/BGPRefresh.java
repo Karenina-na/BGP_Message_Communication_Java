@@ -1,9 +1,10 @@
 package org.example.message.refresh;
 
 import cn.hutool.core.date.DateUtil;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.example.BGPClient;
 import org.example.message.BGPPkt;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BGPRefresh implements BGPPkt {
     private final String time;
@@ -11,7 +12,7 @@ public class BGPRefresh implements BGPPkt {
     private final int afi;
     private final int res;
     private final int safi;
-    protected static final Logger LOGGER = LogManager.getLogger(LogManager.ROOT_LOGGER_NAME);
+    protected static final Logger LOGGER = LoggerFactory.getLogger(BGPClient.class);
 
 
     public BGPRefresh(int afi, int safi) {  // default res = 0, afi = 1, safi = 1

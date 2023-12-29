@@ -1,10 +1,11 @@
 package org.example.message.open;
 
 import cn.hutool.core.date.DateUtil;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.example.BGPClient;
 import org.example.message.BGPPkt;
 import org.example.message.open.open_opt.BGPOpenOpt;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Vector;
 
@@ -16,7 +17,7 @@ public class BGPOpen implements BGPPkt {
     private final int holdTime;
     private final String id;
     private final Vector<BGPOpenOpt> optPara;
-    protected static final Logger LOGGER = LogManager.getLogger(LogManager.ROOT_LOGGER_NAME);
+    protected static final Logger LOGGER = LoggerFactory.getLogger(BGPClient.class);
 
     public BGPOpen(int version, int asn, int holdTime, String id, Vector<BGPOpenOpt> optPara) {
         this.version = version;

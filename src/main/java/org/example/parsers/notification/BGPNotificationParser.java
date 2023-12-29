@@ -1,14 +1,14 @@
 package org.example.parsers.notification;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.example.message.keeplive.BGPKeepLive;
+import org.example.BGPClient;
 import org.example.message.notification.BGPNotification;
 import org.example.message.notification.BGPNotificationErrorCode;
 import org.example.message.notification.BGPNotificationSubErrorCode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BGPNotificationParser {
-    protected static final Logger LOGGER = LogManager.getLogger(LogManager.ROOT_LOGGER_NAME);
+    protected static final Logger LOGGER = LoggerFactory.getLogger(BGPClient.class);
     public static BGPNotification parse(byte[] packet) {
         /*
         marker: 16 bytes

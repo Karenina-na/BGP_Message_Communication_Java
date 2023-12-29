@@ -1,13 +1,13 @@
 package org.example.parsers.open;
 
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.example.BGPClient;
 import org.example.message.open.BGPOpen;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BGPOpenParser{
 
-    protected static final Logger LOGGER = LogManager.getLogger(LogManager.ROOT_LOGGER_NAME);
+    protected static final Logger LOGGER = LoggerFactory.getLogger(BGPClient.class);
 
 
     public static BGPOpen parse(byte[] packet) {

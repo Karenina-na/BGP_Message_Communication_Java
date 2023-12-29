@@ -1,16 +1,17 @@
 package org.example.parsers.update;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.example.BGPClient;
 import org.example.message.update.BGPUpdate;
 import org.example.message.update.BGPUpdateNLRI;
 import org.example.message.update.path_attr.BGPUpdatePathAttr;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Vector;
 
 public class BGPUpdateParser{
 
-    protected static final Logger LOGGER = LogManager.getLogger(LogManager.ROOT_LOGGER_NAME);
+    protected static final Logger LOGGER = LoggerFactory.getLogger(BGPClient.class);
 
     public static BGPUpdate parse(byte[] pkt) {
         /*

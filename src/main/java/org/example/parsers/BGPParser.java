@@ -1,8 +1,6 @@
 package org.example.parsers;
 
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.example.BGPClient;
 import org.example.message.BGPPkt;
 import org.example.message.BGPType;
 import org.example.parsers.keeplive.BGPKeepLiveParser;
@@ -10,11 +8,13 @@ import org.example.parsers.notification.BGPNotificationParser;
 import org.example.parsers.open.BGPOpenParser;
 import org.example.parsers.refresh.BGPRefreshParser;
 import org.example.parsers.update.BGPUpdateParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Vector;
 
 public class BGPParser {
-    protected static final Logger LOGGER = LogManager.getLogger(LogManager.ROOT_LOGGER_NAME);
+    protected static final Logger LOGGER = LoggerFactory.getLogger(BGPClient.class);
 
     // 解析器
     public static Vector<BGPPkt> parse(byte[] packet) {
