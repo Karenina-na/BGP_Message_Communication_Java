@@ -64,7 +64,7 @@ public class BGPXmlTest {
     private final BGPRefresh bgp_rf = new BGPRefresh(1, 1);
 
     // path
-    private final String path = "xml_demo";
+    private final String path = "./xml";
 
     // check xml
     @Before

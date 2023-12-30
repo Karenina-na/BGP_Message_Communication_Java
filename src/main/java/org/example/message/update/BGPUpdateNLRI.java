@@ -26,7 +26,7 @@ public class BGPUpdateNLRI {
         return packet;
     }
 
-    String to_string() {
+    public String to_string() {
         String s = "- Domain: " + prefix + "/" + prefixLen + "\n";
         s += "  - prefixLen: " + prefixLen + "\n";
         s += "  - prefix: " + prefix + "\n";
@@ -35,7 +35,7 @@ public class BGPUpdateNLRI {
 
 
     public void set_xml(Element route) {
-        route.addElement("prefixLen").addText(String.valueOf(prefixLen)).addAttribute("size", "1");
+        route.addElement("prefix_len").addText(String.valueOf(prefixLen)).addAttribute("size", "1");
         route.addElement("prefix").addText(prefix).addAttribute("size", String.valueOf(prefixLen / 8));
     }
 }

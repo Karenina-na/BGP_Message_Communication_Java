@@ -183,8 +183,9 @@ public class BGPUpdate implements BGPPkt {
             attr.set_xml(pathAttr);
         }
         if (!isWithdrawn) {
-            Element nlri = body.addElement("nlri");
+            Element nlris = body.addElement("nlris");
             for (BGPUpdateNLRI nlriEle : this.nlri) {
+                Element nlri = nlris.addElement("nlri");
                 nlriEle.set_xml(nlri);
             }
         }

@@ -10,7 +10,7 @@
     <withdrawn_len size="2">1</withdrawn_len>
     <withdrawn_routes>
       <withdrawn_route>
-        <prefixLen size="1">24</prefixLen>
+        <prefix_len size="1">24</prefix_len>
         <prefix size="3">11.0.0.0</prefix>
       </withdrawn_route>
     </withdrawn_routes>

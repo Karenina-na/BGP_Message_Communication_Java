@@ -39,9 +39,11 @@
         <med size="4">0</med>
       </med>
     </path_attr>
-    <nlri>
-      <prefixLen size="1">24</prefixLen>
-      <prefix size="3">10.0.0.0</prefix>
-    </nlri>
+    <nlris>
+      <nlri>
+        <prefix_len size="1">24</prefix_len>
+        <prefix size="3">10.0.0.0</prefix>
+      </nlri>
+    </nlris>
   </body>
 </bgp_update>
