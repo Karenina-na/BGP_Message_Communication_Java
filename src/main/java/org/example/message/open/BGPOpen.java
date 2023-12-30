@@ -1,13 +1,23 @@
 package org.example.message.open;
 
+import cn.hutool.core.convert.Convert;
 import cn.hutool.core.date.DateUtil;
+import org.dom4j.Document;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
+import org.dom4j.io.OutputFormat;
+import org.dom4j.io.XMLWriter;
 import org.example.BGPClient;
 import org.example.message.BGPPkt;
 import org.example.message.open.open_opt.BGPOpenOpt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 import java.util.Vector;
 
 public class BGPOpen implements BGPPkt {
@@ -113,7 +123,42 @@ public class BGPOpen implements BGPPkt {
     }
 
     @Override
-    public void write_to_xml(String path) throws IOException {
+    public void write_to_xml(String path_relative) throws IOException {
+        // root
+        Document document = DocumentHelper.createDocument();
+        Element root = document.addElement("bgp_open");
+        // header
+        Element header = root.addElement("header");
+        header.addElement("marker").addText(Convert.toHex(this.marker)).addAttribute("size", "16");
+        header.addElement("length").addText(String.valueOf(build_packet().length)).addAttribute("size", "2");
+        header.addElement("type").addText("1").addAttribute("size", "1");
+        // body
+        Element body = root.addElement("body");
+        body.addElement("version").addText(String.valueOf(version)).addAttribute("size", "1");
+        body.addElement("asn").addText(String.valueOf(asn)).addAttribute("size", "2");
+        body.addElement("hold_time").addText(String.valueOf(holdTime)).addAttribute("size", "2");
+        body.addElement("id").addText(id).addAttribute("size", "4");
+        int optLen = 0;
+        if (optPara != null) {
+            for (BGPOpenOpt opt : optPara) {
+                optLen += opt.build_packet().length;
+            }
+        }
+        body.addElement("opt_len").addText(String.valueOf(optLen)).addAttribute("size", "1");
+        Element opt = body.addElement("opt");
+        if (optLen != 0) {
+            for (BGPOpenOpt optPara : optPara) {
+                optPara.set_xml(opt);
+            }
+        }
 
+        // write to file - resources
+        String path = Objects.requireNonNull(this.getClass().getClassLoader().getResource("")).getPath() + path_relative;
+        XMLWriter writer = new XMLWriter(
+                new OutputStreamWriter(new FileOutputStream(path), StandardCharsets.UTF_8),
+                OutputFormat.createPrettyPrint()
+        );
+        writer.write(document);
+        writer.close();
     }
 }

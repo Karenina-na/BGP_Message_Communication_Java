@@ -1,6 +1,7 @@
 package org.example.message.open.open_opt;
 
 import cn.hutool.core.convert.Convert;
+import org.dom4j.Element;
 
 public class BGPOpenOptMultiprotocolExtCap implements BGPOpenOpt{
 
@@ -52,5 +53,20 @@ public class BGPOpenOptMultiprotocolExtCap implements BGPOpenOpt{
         result += "    - reserved: 0x" + Convert.toHex(new byte[] {(byte) 0x00}) + "\n";
         result += "    - safi: 0x" + Convert.toHex(new byte[] {(byte) safi}) + "\n";
         return result;
+    }
+
+    @Override
+    public void set_xml(Element opt) {
+        // opt - Capability
+        Element capability = opt.addElement("Capability");
+        capability.addElement("type").addText("2").addAttribute("size", "1");
+        capability.addElement("length").addText("6").addAttribute("size", "1");
+        // capability - Multiprotocol Extensions
+        Element multiExt = capability.addElement("MultiProtocolExtensions");
+        multiExt.addElement("type").addText("1").addAttribute("size", "1");
+        multiExt.addElement("length").addText("4").addAttribute("size", "1");
+        multiExt.addElement("afi").addText(String.valueOf(afi)).addAttribute("size", "2");
+        multiExt.addElement("reserved").addText("00").addAttribute("size", "1");
+        multiExt.addElement("safi").addText(String.valueOf(safi)).addAttribute("size", "1");
     }
 }

@@ -1,6 +1,7 @@
 package org.example.message.open.open_opt;
 
 import cn.hutool.core.convert.Convert;
+import org.dom4j.Element;
 
 public class BGPOpen4OctAsNumberCap implements BGPOpenOpt{
 
@@ -43,5 +44,18 @@ public class BGPOpen4OctAsNumberCap implements BGPOpenOpt{
         result += "  - capability: 4-octet AS number (" + 0x41 + ")\n";
         result += "    - asn: " + asn + "\n";
         return result;
+    }
+
+    @Override
+    public void set_xml(Element opt) {
+        // opt - Capability
+        Element capability = opt.addElement("Capability");
+        capability.addElement("type").addText("2").addAttribute("size", "1");
+        capability.addElement("length").addText("6").addAttribute("size", "1");
+        // capability - 4-octet AS number
+        Element four_octet_as_number = capability.addElement("FourOctetASNumber");
+        four_octet_as_number.addElement("type").addText("65").addAttribute("size", "1");
+        four_octet_as_number.addElement("length").addText("4").addAttribute("size", "1");
+        four_octet_as_number.addElement("asn").addText(String.valueOf(asn)).addAttribute("size", "4");
     }
 }
