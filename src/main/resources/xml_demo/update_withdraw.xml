@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<bgp_update>
+  <header>
+    <marker size="16">ffffffffffffffffffffffffffffffff</marker>
+    <length size="2">27</length>
+    <type size="1">2</type>
+  </header>
+  <body>
+    <withdrawn_len size="2">1</withdrawn_len>
+    <withdrawn_routes>
+      <withdrawn_route>
+        <prefixLen size="1">24</prefixLen>
+        <prefix size="3">11.0.0.0</prefix>
+      </withdrawn_route>
+    </withdrawn_routes>
+    <total_path_attr_len size="2">0</total_path_attr_len>
+    <path_attr/>
+  </body>
+</bgp_update>
