@@ -1,12 +1,22 @@
 package org.example.message.refresh;
 
+import cn.hutool.core.convert.Convert;
 import cn.hutool.core.date.DateUtil;
+import org.dom4j.Document;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
+import org.dom4j.io.OutputFormat;
+import org.dom4j.io.XMLWriter;
 import org.example.BGPClient;
 import org.example.message.BGPPkt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 public class BGPRefresh implements BGPPkt {
     private final String time;
@@ -66,7 +76,28 @@ public class BGPRefresh implements BGPPkt {
     }
 
     @Override
-    public void write_to_xml(String path) throws IOException {
+    public void write_to_xml(String path_relative) throws IOException {
+        // root
+        Document document = DocumentHelper.createDocument();
+        Element root = document.addElement("bgp_notification");
+        // header
+        Element header = root.addElement("header");
+        header.addElement("marker").addText(Convert.toHex(this.marker)).addAttribute("size", "16");
+        header.addElement("length").addText(String.valueOf(build_packet().length)).addAttribute("size", "2");
+        header.addElement("type").addText("5").addAttribute("size", "1");
+        // body
+        Element body = root.addElement("body");
+        body.addElement("afi").addText(String.valueOf(afi)).addAttribute("size", "2");
+        body.addElement("res").addText(String.valueOf(res)).addAttribute("size", "1");
+        body.addElement("safi").addText(String.valueOf(safi)).addAttribute("size", "1");
 
+        // write to file - resources
+        String path = Objects.requireNonNull(this.getClass().getClassLoader().getResource("")).getPath() + path_relative;
+        XMLWriter writer = new XMLWriter(
+                new OutputStreamWriter(new FileOutputStream(path), StandardCharsets.UTF_8),
+                OutputFormat.createPrettyPrint()
+        );
+        writer.write(document);
+        writer.close();
     }
 }

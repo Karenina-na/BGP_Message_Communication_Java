@@ -24,9 +24,8 @@ import java.util.Vector;
 
 public class TestMain {
 
-
     public static void main(String[] args) throws IOException, SAXException {
-        BGPNotification keepLive = new BGPNotification(BGPNotificationErrorCode.Cease, BGPNotificationSubErrorCode.ConnectionRejected);
-        keepLive.write_to_xml("notification.xml");
+        BGPRefresh pack = new BGPRefresh(1, 1);
+        pack.write_to_xml("refresh.xml");
     }
 }
