@@ -182,12 +182,11 @@ public class BGPUpdate implements BGPPkt {
         for (BGPUpdatePathAttr attr : this.pathAttr) {
             attr.set_xml(pathAttr);
         }
-        if (isWithdrawn) {
-            return;
-        }
-        Element nlri = body.addElement("nlri");
-        for (BGPUpdateNLRI nlriEle : this.nlri) {
-            nlriEle.set_xml(nlri);
+        if (!isWithdrawn) {
+            Element nlri = body.addElement("nlri");
+            for (BGPUpdateNLRI nlriEle : this.nlri) {
+                nlriEle.set_xml(nlri);
+            }
         }
 
         // write to file - resources
