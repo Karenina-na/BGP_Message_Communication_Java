@@ -1,6 +1,7 @@
 package org.example.message.update.path_attr;
 
 import cn.hutool.core.convert.Convert;
+import org.dom4j.Element;
 
 public class BGPUpdateAttrNEXT_HOP implements BGPUpdatePathAttr{
     private final byte flags;   // default 0x40
@@ -37,5 +38,14 @@ public class BGPUpdateAttrNEXT_HOP implements BGPUpdatePathAttr{
         result += "  - length: 0x" + Convert.toHex(new byte[] {(byte) 0x04}) + "\n";
         result += "  - next hop: " + next_hop + "\n";
         return result;
+    }
+
+    @Override
+    public void set_xml(Element attr) {
+        Element next_hop = attr.addElement("next_hop");
+        next_hop.addElement("flags").addText("0x" + Convert.toHex(new byte[] {flags})).addAttribute("size", "1");
+        next_hop.addElement("type_code").addText(String.valueOf(3)).addAttribute("size", "1");
+        next_hop.addElement("length").addText(String.valueOf(4)).addAttribute("size", "1");
+        next_hop.addElement("next_hop").addText(this.next_hop).addAttribute("size", "4");
     }
 }

@@ -1,10 +1,20 @@
 package org.example.message.update;
 
+import cn.hutool.core.convert.Convert;
 import cn.hutool.core.date.DateUtil;
+import org.dom4j.Document;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
+import org.dom4j.io.OutputFormat;
+import org.dom4j.io.XMLWriter;
 import org.example.message.BGPPkt;
 import org.example.message.update.path_attr.BGPUpdatePathAttr;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 import java.util.Vector;
 
 public class BGPUpdate implements BGPPkt {
@@ -142,7 +152,51 @@ public class BGPUpdate implements BGPPkt {
     }
 
     @Override
-    public void write_to_xml(String path) throws IOException {
+    public void write_to_xml(String path_relative) throws IOException {
+        // root
+        Document document = DocumentHelper.createDocument();
+        Element root = document.addElement("bgp_update");
+        // header
+        Element header = root.addElement("header");
+        header.addElement("marker").addText(Convert.toHex(this.marker)).addAttribute("size", "16");
+        header.addElement("length").addText(String.valueOf(build_packet().length)).addAttribute("size", "2");
+        header.addElement("type").addText("2").addAttribute("size", "1");
+        // body
+        Element body = root.addElement("body");
+        if (isWithdrawn) {
+            body.addElement("withdrawn_len").addText(String.valueOf(nlri.size())).addAttribute("size", "2");
+            Element withdrawn = body.addElement("withdrawn_routes");
+            for (BGPUpdateNLRI nlri : nlri) {
+                Element nlriEle = withdrawn.addElement("withdrawn_route");
+                nlri.set_xml(nlriEle);
+            }
+        } else {
+            body.addElement("withdrawn_len").addText(String.valueOf(0)).addAttribute("size", "2");
+        }
+        int pathAttrLen = 0;
+        for (BGPUpdatePathAttr attr : pathAttr) {
+            pathAttrLen += attr.build_packet().length;
+        }
+        body.addElement("total_path_attr_len").addText(String.valueOf(pathAttrLen)).addAttribute("size", "2");
+        Element pathAttr = body.addElement("path_attr");
+        for (BGPUpdatePathAttr attr : this.pathAttr) {
+            attr.set_xml(pathAttr);
+        }
+        if (isWithdrawn) {
+            return;
+        }
+        Element nlri = body.addElement("nlri");
+        for (BGPUpdateNLRI nlriEle : this.nlri) {
+            nlriEle.set_xml(nlri);
+        }
 
+        // write to file - resources
+        String path = Objects.requireNonNull(this.getClass().getClassLoader().getResource("")).getPath() + path_relative;
+        XMLWriter writer = new XMLWriter(
+                new OutputStreamWriter(new FileOutputStream(path), StandardCharsets.UTF_8),
+                OutputFormat.createPrettyPrint()
+        );
+        writer.write(document);
+        writer.close();
     }
 }

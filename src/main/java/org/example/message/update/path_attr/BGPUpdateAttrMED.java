@@ -1,6 +1,7 @@
 package org.example.message.update.path_attr;
 
 import cn.hutool.core.convert.Convert;
+import org.dom4j.Element;
 
 public class BGPUpdateAttrMED implements BGPUpdatePathAttr{
 
@@ -38,5 +39,14 @@ public class BGPUpdateAttrMED implements BGPUpdatePathAttr{
         result += "  - length: 0x" + Convert.toHex(new byte[] {(byte) 0x04}) + "\n";
         result += "  - Multiple exit discriminator: " + med + "\n";
         return result;
+    }
+
+    @Override
+    public void set_xml(Element attr) {
+        Element med = attr.addElement("med");
+        med.addElement("flags").addText("0x" + Convert.toHex(new byte[] {flags})).addAttribute("size", "1");
+        med.addElement("type_code").addText(String.valueOf(4)).addAttribute("size", "1");
+        med.addElement("length").addText(String.valueOf(4)).addAttribute("size", "1");
+        med.addElement("med").addText(String.valueOf(this.med)).addAttribute("size", "4");
     }
 }

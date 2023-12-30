@@ -25,14 +25,20 @@ import java.util.Vector;
 public class TestMain {
 
     public static void main(String[] args) throws IOException, SAXException {
-        BGPOpen bgp_op = new BGPOpen(4, 500, 180, "192.168.10.1",
+        BGPUpdate bgp_up = new BGPUpdate(false,
                 new Vector<>(){{
-                    add(new BGPOpenOptMultiprotocolExtCap(1, 1));
-                    add(new BGPOpenOptRouterRefreshCap());
-                    add(new BGPOpen4OctAsNumberCap(500));
+                    add(new BGPUpdateAttrORIGIN((byte) 0x40, 0));   // ORIGIN
+                    add(new BGPUpdateAttrAS_PATH((byte) 0x40, new Vector<>(){{  // AS_PATH
+                        add(100);
+                    }}));
+                    add(new BGPUpdateAttrNEXT_HOP((byte) 0x40, "192.168.10.5"));  // NEXT_HOP
+                    add(new BGPUpdateAttrMED((byte) 0x80, 0));  // Multi Exit Disc
+                }},
+                new Vector<>(){{
+                    add(new BGPUpdateNLRI(24, "10.0.0.0")); // NLRI
                 }}
         );
-        bgp_op.write_to_xml("open.xml");
-        System.out.println(bgp_op.to_string());
+        bgp_up.write_to_xml("update.xml");
+        System.out.println(bgp_up.to_string());
     }
 }
