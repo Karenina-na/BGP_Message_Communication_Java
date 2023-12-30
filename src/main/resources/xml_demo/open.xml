@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<bgp_open>
+  <header>
+    <marker size="16">ffffffffffffffffffffffffffffffff</marker>
+    <length size="2">49</length>
+    <type size="1">1</type>
+  </header>
+  <body>
+    <version size="1">4</version>
+    <asn size="2">500</asn>
+    <hold_time size="2">180</hold_time>
+    <id size="4">192.168.10.1</id>
+    <opt_len size="1">20</opt_len>
+    <opt>
+      <Capability>
+        <type size="1">2</type>
+        <length size="1">6</length>
+        <MultiProtocolExtensions>
+          <type size="1">1</type>
+          <length size="1">4</length>
+          <afi size="2">1</afi>
+          <reserved size="1">00</reserved>
+          <safi size="1">1</safi>
+        </MultiProtocolExtensions>
+      </Capability>
+      <Capability>
+        <type size="1">2</type>
+        <length size="1">2</length>
+        <RouteRefresh>
+          <type size="1">2</type>
+          <length size="1">0</length>
+        </RouteRefresh>
+      </Capability>
+      <Capability>
+        <type size="1">2</type>
+        <length size="1">6</length>
+        <FourOctetASNumber>
+          <type size="1">65</type>
+          <length size="1">4</length>
+          <asn size="4">500</asn>
+        </FourOctetASNumber>
+      </Capability>
+    </opt>
+  </body>
+</bgp_open>

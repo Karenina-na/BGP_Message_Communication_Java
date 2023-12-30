@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<bgp_keeplive>
+  <header>
+    <marker size="16">ffffffffffffffffffffffffffffffff</marker>
+    <length size="2">19</length>
+    <type size="1">4</type>
+  </header>
+</bgp_keeplive>

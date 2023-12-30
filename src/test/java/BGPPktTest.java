@@ -15,7 +15,7 @@ import org.example.message.update.path_attr.BGPUpdateAttrAS_PATH;
 import org.example.message.update.path_attr.BGPUpdateAttrMED;
 import org.example.message.update.path_attr.BGPUpdateAttrNEXT_HOP;
 import org.example.message.update.path_attr.BGPUpdateAttrORIGIN;
-import org.example.parsers.BGPParser;
+import org.example.parsers.BGPPktParser;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -88,6 +88,9 @@ public class BGPPktTest {
         add(Convert.hexToBytes(packet_map.get("bgp_nt")));
         add(Convert.hexToBytes(packet_map.get("bgp_rf")));
     }};
+
+    // 解析器
+    private final BGPPktParser BGPPktParser = new BGPPktParser();
 
     @Test
     public void testOpen() {
@@ -162,7 +165,7 @@ public class BGPPktTest {
         assert Convert.toHex(packet).equals(Convert.toHex(packet_baseline));
 
         // 解析 -- 并分割
-        Vector<BGPPkt> result = BGPParser.parse(packet);
+        Vector<BGPPkt> result = BGPPktParser.parse(packet);
 
         // 转换为字节数组
         byte[] packet_r = new byte[result.stream().mapToInt(o -> ((byte[]) o.build_packet()).length).sum()];

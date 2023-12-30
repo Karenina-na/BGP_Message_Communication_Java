@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<bgp_notification>
+  <header>
+    <marker size="16">ffffffffffffffffffffffffffffffff</marker>
+    <length size="2">23</length>
+    <type size="1">5</type>
+  </header>
+  <body>
+    <afi size="2">1</afi>
+    <res size="1">0</res>
+    <safi size="1">1</safi>
+  </body>
+</bgp_notification>

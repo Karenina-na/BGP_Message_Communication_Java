@@ -16,7 +16,7 @@ import org.example.message.update.path_attr.BGPUpdateAttrAS_PATH;
 import org.example.message.update.path_attr.BGPUpdateAttrMED;
 import org.example.message.update.path_attr.BGPUpdateAttrNEXT_HOP;
 import org.example.message.update.path_attr.BGPUpdateAttrORIGIN;
-import org.example.parsers.BGPParser;
+import org.example.parsers.BGPPktParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,6 +49,8 @@ public class BGPClient {
         });
         t.start();
 
+        // 解析器
+        BGPPktParser BGPPktParser = new BGPPktParser();
 
         // process and send
         byte[] buffer;
@@ -67,7 +69,7 @@ public class BGPClient {
             buffer = pipe.poll();
             Thread.sleep(1);
         } while (buffer == null);
-        result = BGPParser.parse(buffer);    // open + keep live
+        result = BGPPktParser.parse(buffer);    // open + keep live
         for (BGPPkt pkt : result) {
 //            System.out.println(pkt.to_string());
             LOGGER.debug(pkt.to_string());
@@ -80,7 +82,7 @@ public class BGPClient {
             buffer = pipe.poll();
             Thread.sleep(1);
         } while (buffer == null);
-        result = BGPParser.parse(buffer);   // update + update
+        result = BGPPktParser.parse(buffer);   // update + update
         for (BGPPkt pkt : result) {
 //            System.out.println(pkt.to_string());
             LOGGER.debug(pkt.to_string());
@@ -105,7 +107,7 @@ public class BGPClient {
             buffer = pipe.poll();
             Thread.sleep(1);
         } while (buffer == null);
-        result = BGPParser.parse(buffer);   // keep live
+        result = BGPPktParser.parse(buffer);   // keep live
         for (BGPPkt pkt : result) {
 //            System.out.println(pkt.to_string());
             LOGGER.debug(pkt.to_string());
@@ -126,7 +128,7 @@ public class BGPClient {
             buffer = pipe.poll();
             Thread.sleep(1);
         } while (buffer == null);
-        result = BGPParser.parse(buffer);   // keep live
+        result = BGPPktParser.parse(buffer);   // keep live
         for (BGPPkt pkt : result) {
 //            System.out.println(pkt.to_string());
             LOGGER.debug(pkt.to_string());
@@ -142,7 +144,7 @@ public class BGPClient {
             buffer = pipe.poll();
             Thread.sleep(1);
         } while (buffer == null);
-        result = BGPParser.parse(buffer);
+        result = BGPPktParser.parse(buffer);
         for (BGPPkt pkt : result) {
 //            System.out.println(pkt.to_string());    // keep live
             LOGGER.debug(pkt.to_string());
@@ -151,7 +153,7 @@ public class BGPClient {
             buffer = pipe.poll();
             Thread.sleep(1);
         } while (buffer == null);
-        result = BGPParser.parse(buffer);   // two update
+        result = BGPPktParser.parse(buffer);   // two update
         for (BGPPkt pkt : result) {
 //            System.out.println(pkt.to_string());
             LOGGER.debug(pkt.to_string());

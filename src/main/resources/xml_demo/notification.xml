@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<bgp_notification>
+  <header>
+    <marker size="16">ffffffffffffffffffffffffffffffff</marker>
+    <length size="2">21</length>
+    <type size="1">3</type>
+  </header>
+  <body>
+    <major_error_code size="1">6</major_error_code>
+    <minor_error_code size="1">5</minor_error_code>
+  </body>
+</bgp_notification>

@@ -1,29 +1,15 @@
 package org.example;
 
-import cn.hutool.core.convert.Convert;
+import org.dom4j.DocumentException;
 import org.example.message.BGPPkt;
-import org.example.message.keeplive.BGPKeepLive;
-import org.example.message.notification.BGPNotification;
-import org.example.message.notification.BGPNotificationErrorCode;
-import org.example.message.notification.BGPNotificationSubErrorCode;
-import org.example.message.open.BGPOpen;
-import org.example.message.open.open_opt.BGPOpen4OctAsNumberCap;
-import org.example.message.open.open_opt.BGPOpenOptMultiprotocolExtCap;
-import org.example.message.open.open_opt.BGPOpenOptRouterRefreshCap;
-import org.example.message.refresh.BGPRefresh;
-import org.example.message.update.*;
-import org.example.message.update.path_attr.BGPUpdateAttrAS_PATH;
-import org.example.message.update.path_attr.BGPUpdateAttrMED;
-import org.example.message.update.path_attr.BGPUpdateAttrNEXT_HOP;
-import org.example.message.update.path_attr.BGPUpdateAttrORIGIN;
-import org.example.parsers.BGPParser;
-import org.xml.sax.SAXException;
-
-import java.io.IOException;
-import java.util.Vector;
+import org.example.parsers.BGPXmlParser;
 
 public class TestMain {
 
-    public static void main(String[] args){
+    public static void main(String[] args) throws DocumentException {
+
+        BGPXmlParser bgpXmlParser = new BGPXmlParser();
+        BGPPkt bgpPkt = bgpXmlParser.parse("xml/open.xml");
+        System.out.println(bgpPkt.to_string());
     }
 }

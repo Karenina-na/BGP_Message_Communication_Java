@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<bgp_update>
+  <header>
+    <marker size="16">ffffffffffffffffffffffffffffffff</marker>
+    <length size="2">52</length>
+    <type size="1">2</type>
+  </header>
+  <body>
+    <withdrawn_len size="2">0</withdrawn_len>
+    <total_path_attr_len size="2">25</total_path_attr_len>
+    <path_attr>
+      <origin>
+        <flags size="1">0x40</flags>
+        <type_code size="1">1</type_code>
+        <length size="1">1</length>
+        <origin size="1">0</origin>
+      </origin>
+      <as_path>
+        <flags size="1">0x40</flags>
+        <type_code size="1">2</type_code>
+        <length size="1">4</length>
+        <as_path_seg>
+          <type_code size="1">2</type_code>
+          <length size="1">1</length>
+          <as2 size="2">100</as2>
+        </as_path_seg>
+      </as_path>
+      <next_hop>
+        <flags size="1">0x40</flags>
+        <type_code size="1">3</type_code>
+        <length size="1">4</length>
+        <next_hop size="4">192.168.10.5</next_hop>
+      </next_hop>
+      <med>
+        <flags size="1">0x80</flags>
+        <type_code size="1">4</type_code>
+        <length size="1">4</length>
+        <med size="4">0</med>
+      </med>
+    </path_attr>
+    <nlri>
+      <prefixLen size="1">24</prefixLen>
+      <prefix size="3">10.0.0.0</prefix>
+    </nlri>
+  </body>
+</bgp_update>
