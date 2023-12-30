@@ -1,12 +1,11 @@
 package org.example.parsers.keeplive;
 
-import org.example.BGPClient;
 import org.example.message.keeplive.BGPKeepLive;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class BGPKeepLiveParser {
-    protected static final Logger LOGGER = LoggerFactory.getLogger(BGPClient.class);
+    protected static final Logger LOGGER = LoggerFactory.getLogger(BGPKeepLiveParser.class);
     public static BGPKeepLive parse(byte[] packet) {
         /*
         marker: 16 bytes

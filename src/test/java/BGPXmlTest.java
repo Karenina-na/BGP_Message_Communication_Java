@@ -1,3 +1,5 @@
+import org.dom4j.DocumentException;
+import org.example.message.BGPPkt;
 import org.example.message.keeplive.BGPKeepLive;
 import org.example.message.notification.BGPNotification;
 import org.example.message.notification.BGPNotificationErrorCode;
@@ -13,11 +15,13 @@ import org.example.message.update.path_attr.BGPUpdateAttrAS_PATH;
 import org.example.message.update.path_attr.BGPUpdateAttrMED;
 import org.example.message.update.path_attr.BGPUpdateAttrNEXT_HOP;
 import org.example.message.update.path_attr.BGPUpdateAttrORIGIN;
+import org.example.parsers.BGPXmlParser;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Vector;
 
 public class BGPXmlTest {
@@ -66,6 +70,16 @@ public class BGPXmlTest {
     // path
     private final String path = "./xml";
 
+    // file_name
+    private final Vector<String> file_name = new Vector<>(){{
+        add("open.xml");
+        add("keep_live.xml");
+        add("update_nlri.xml");
+        add("update_withdraw.xml");
+        add("notification.xml");
+        add("refresh.xml");
+    }};
+
     // check xml
     @Before
     public void check_xml_path(){
@@ -104,5 +118,45 @@ public class BGPXmlTest {
     @Test
     public void testRefresh() throws IOException {
         bgp_rf.write_to_xml(path + "/refresh.xml");
+    }
+
+    // check parser
+    @Test
+    public void testOpenParser(){
+        BGPXmlParser parser = new BGPXmlParser();
+
+        file_name.forEach(file -> {
+            try {
+                BGPPkt pkt = parser.parse(path + "/" + file);
+                switch (file_name.indexOf(file)){
+                    case 0: {
+                        assert Arrays.equals(pkt.build_packet(), bgp_op.build_packet());
+                        break;
+                    }
+                    case 1: {
+                        assert Arrays.equals(pkt.build_packet(), bgp_kl.build_packet());
+                        break;
+                    }
+                    case 2: {
+                        assert Arrays.equals(pkt.build_packet(), bgp_up.build_packet());
+                        break;
+                    }
+                    case 3: {
+                        assert Arrays.equals(pkt.build_packet(), bgp_up_draw.build_packet());
+                        break;
+                    }
+                    case 4: {
+                        assert Arrays.equals(pkt.build_packet(), bgp_nt.build_packet());
+                        break;
+                    }
+                    case 5: {
+                        assert Arrays.equals(pkt.build_packet(), bgp_rf.build_packet());
+                        break;
+                    }
+                }
+            } catch (DocumentException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 }

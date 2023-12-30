@@ -1,6 +1,5 @@
 package org.example.parsers;
 
-import org.example.BGPClient;
 import org.example.message.BGPPkt;
 import org.example.message.BGPType;
 import org.example.parsers.keeplive.BGPKeepLiveParser;
@@ -14,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Vector;
 
 public class BGPPktParser implements BGPParser{
-    protected static final Logger LOGGER = LoggerFactory.getLogger(BGPClient.class);
+    protected static final Logger LOGGER = LoggerFactory.getLogger(BGPPktParser.class);
 
     // 解析器
     public Vector<BGPPkt> parse(byte[] packet) {

@@ -1,12 +1,11 @@
 package org.example.parsers.refresh;
 
-import org.example.BGPClient;
 import org.example.message.refresh.BGPRefresh;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class BGPRefreshParser {
-    protected static final Logger LOGGER = LoggerFactory.getLogger(BGPClient.class);
+    protected static final Logger LOGGER = LoggerFactory.getLogger(BGPRefreshParser.class);
     public static BGPRefresh parse(byte[] packet) {
         /*
         marker: 16 bytes

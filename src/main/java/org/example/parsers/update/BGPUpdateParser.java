@@ -1,6 +1,5 @@
 package org.example.parsers.update;
 
-import org.example.BGPClient;
 import org.example.message.update.BGPUpdate;
 import org.example.message.update.BGPUpdateNLRI;
 import org.example.message.update.path_attr.BGPUpdatePathAttr;
@@ -11,7 +10,7 @@ import java.util.Vector;
 
 public class BGPUpdateParser{
 
-    protected static final Logger LOGGER = LoggerFactory.getLogger(BGPClient.class);
+    protected static final Logger LOGGER = LoggerFactory.getLogger(BGPUpdateParser.class);
 
     public static BGPUpdate parse(byte[] pkt) {
         /*
