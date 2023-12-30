@@ -7,6 +7,7 @@ import org.example.message.keeplive.BGPKeepLive;
 
 public class BGPKeepLiveXmlParser {
     public static BGPKeepLive parse(Element body){
-        return null;
+        // keeplive needn't body
+        return new BGPKeepLive();
     };
 }
