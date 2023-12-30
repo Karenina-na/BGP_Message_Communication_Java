@@ -54,7 +54,7 @@ public class BGPOpenXmlParser {
         );
     };
 
-    public static BGPOpenOpt get_opt(int type, Element cap){
+    private static BGPOpenOpt get_opt(int type, Element cap){
         BGPOpenOpt opt = null;
         int length = 0;
 
