@@ -1,6 +1,7 @@
 package org.example.message.update.path_attr;
 
 import cn.hutool.core.convert.Convert;
+import org.dom4j.Element;
 
 public class BGPUpdateAttrORIGIN implements BGPUpdatePathAttr{
 
@@ -34,5 +35,14 @@ public class BGPUpdateAttrORIGIN implements BGPUpdatePathAttr{
         result += "  - length: 0x" + Convert.toHex(new byte[] {(byte) 0x01}) + "\n";
         result += "  - origin: 0x" + Convert.toHex(new byte[] {(byte) origin}) + "\n";
         return result;
+    }
+
+    @Override
+    public void set_xml(Element attr) {
+        Element origin = attr.addElement("origin");
+        origin.addElement("flags").addText("0x" + Convert.toHex(new byte[] {flags})).addAttribute("size", "1");
+        origin.addElement("type_code").addText(String.valueOf(1)).addAttribute("size", "1");
+        origin.addElement("length").addText(String.valueOf(1)).addAttribute("size", "1");
+        origin.addElement("origin").addText(String.valueOf(this.origin)).addAttribute("size", "1");
     }
 }

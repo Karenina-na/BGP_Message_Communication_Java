@@ -24,15 +24,6 @@ import java.util.Vector;
 
 public class TestMain {
 
-    public static void main(String[] args) throws IOException, SAXException {
-        BGPOpen bgp_op = new BGPOpen(4, 500, 180, "192.168.10.1",
-                new Vector<>(){{
-                    add(new BGPOpenOptMultiprotocolExtCap(1, 1));
-                    add(new BGPOpenOptRouterRefreshCap());
-                    add(new BGPOpen4OctAsNumberCap(500));
-                }}
-        );
-        bgp_op.write_to_xml("open.xml");
-        System.out.println(bgp_op.to_string());
+    public static void main(String[] args){
     }
 }

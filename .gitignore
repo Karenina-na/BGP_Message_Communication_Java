@@ -39,3 +39,5 @@ build/
 
 
 *.log
+/log_out
+/xml

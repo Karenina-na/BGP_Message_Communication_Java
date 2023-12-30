@@ -1,5 +1,7 @@
 package org.example.message.update;
 
+import org.dom4j.Element;
+
 public class BGPUpdateNLRI {
 
     private final int prefixLen;
@@ -29,5 +31,11 @@ public class BGPUpdateNLRI {
         s += "  - prefixLen: " + prefixLen + "\n";
         s += "  - prefix: " + prefix + "\n";
         return s;
+    }
+
+
+    public void set_xml(Element route) {
+        route.addElement("prefixLen").addText(String.valueOf(prefixLen)).addAttribute("size", "1");
+        route.addElement("prefix").addText(prefix).addAttribute("size", String.valueOf(prefixLen / 8));
     }
 }

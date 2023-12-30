@@ -153,9 +153,9 @@ public class BGPOpen implements BGPPkt {
         }
 
         // write to file - resources
-        String path = Objects.requireNonNull(this.getClass().getClassLoader().getResource("")).getPath() + path_relative;
+//        String path = Objects.requireNonNull(this.getClass().getClassLoader().getResource("")).getPath() + path_relative;
         XMLWriter writer = new XMLWriter(
-                new OutputStreamWriter(new FileOutputStream(path), StandardCharsets.UTF_8),
+                new OutputStreamWriter(new FileOutputStream(path_relative), StandardCharsets.UTF_8),
                 OutputFormat.createPrettyPrint()
         );
         writer.write(document);

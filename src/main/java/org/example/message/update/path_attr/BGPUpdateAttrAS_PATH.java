@@ -1,6 +1,7 @@
 package org.example.message.update.path_attr;
 
 import cn.hutool.core.convert.Convert;
+import org.dom4j.Element;
 
 import java.util.Vector;
 
@@ -49,5 +50,20 @@ public class BGPUpdateAttrAS_PATH implements BGPUpdatePathAttr{
         }
         result = resultBuilder.toString();
         return result;
+    }
+
+    @Override
+    public void set_xml(Element attr) {
+        Element as_path = attr.addElement("as_path");
+        as_path.addElement("flags").addText("0x" + Convert.toHex(new byte[] {flags})).addAttribute("size", "1");
+        as_path.addElement("type_code").addText( String.valueOf(2)).addAttribute("size", "1");
+        as_path.addElement("length").addText( String.valueOf(2 + this.as_path.size() * 2)).addAttribute("size", "1");
+        // as_path_seg
+        Element as_path_seg = as_path.addElement("as_path_seg");
+        as_path_seg.addElement("type_code").addText( String.valueOf(2)).addAttribute("size", "1"); // as_path type code 2 AS_SEQUENCE
+        as_path_seg.addElement("length").addText( String.valueOf(this.as_path.size())).addAttribute("size", "1");  // as_path length
+        for (int i = 0; i < this.as_path.size(); i++) {
+            as_path_seg.addElement("as2").addText(String.valueOf(this.as_path.get(i))).addAttribute("size", "2");
+        }
     }
 }
