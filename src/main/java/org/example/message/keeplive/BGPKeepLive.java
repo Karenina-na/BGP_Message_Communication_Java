@@ -69,7 +69,6 @@ public class BGPKeepLive implements BGPPkt {
 
         // write to file - resources
         String path = Objects.requireNonNull(this.getClass().getClassLoader().getResource("")).getPath() + path_relative;
-        System.out.println(path);
         XMLWriter writer = new XMLWriter(
                 new OutputStreamWriter(new FileOutputStream(path), StandardCharsets.UTF_8),
                 OutputFormat.createPrettyPrint()

@@ -1,9 +1,19 @@
 package org.example.message.notification;
 
+import cn.hutool.core.convert.Convert;
 import cn.hutool.core.date.DateUtil;
+import org.dom4j.Document;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
+import org.dom4j.io.OutputFormat;
+import org.dom4j.io.XMLWriter;
 import org.example.message.BGPPkt;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 public class BGPNotification implements BGPPkt {
     private final String time;
@@ -35,7 +45,7 @@ public class BGPNotification implements BGPPkt {
         // length   0x00 0x13
         packet[16] = (byte) ((21) >> 8);
         packet[17] = (byte) ((21) & 0xff);
-        // type - keep live for 4
+        // type - notification for 3
         packet[18] = (byte) 0x03;
         // major error code
         packet[19] = (byte) major_error_code.getValue();
@@ -55,7 +65,27 @@ public class BGPNotification implements BGPPkt {
     }
 
     @Override
-    public void write_to_xml(String path) throws IOException {
+    public void write_to_xml(String path_relative) throws IOException {
+        // root
+        Document document = DocumentHelper.createDocument();
+        Element root = document.addElement("bgp_notification");
+        // header
+        Element header = root.addElement("header");
+        header.addElement("marker").addText(Convert.toHex(this.marker)).addAttribute("size", "16");
+        header.addElement("length").addText(String.valueOf(build_packet().length)).addAttribute("size", "2");
+        header.addElement("type").addText("3").addAttribute("size", "1");
+        // body
+        Element body = root.addElement("body");
+        body.addElement("major_error_code").addText(String.valueOf(major_error_code.getValue())).addAttribute("size", "1");
+        body.addElement("minor_error_code").addText(String.valueOf(minor_error_code.getValue())).addAttribute("size", "1");
 
+        // write to file - resources
+        String path = Objects.requireNonNull(this.getClass().getClassLoader().getResource("")).getPath() + path_relative;
+        XMLWriter writer = new XMLWriter(
+                new OutputStreamWriter(new FileOutputStream(path), StandardCharsets.UTF_8),
+                OutputFormat.createPrettyPrint()
+        );
+        writer.write(document);
+        writer.close();
     }
 }

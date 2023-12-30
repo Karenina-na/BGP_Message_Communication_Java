@@ -26,7 +26,7 @@ public class TestMain {
 
 
     public static void main(String[] args) throws IOException, SAXException {
-        BGPKeepLive keepLive = new BGPKeepLive();
-        keepLive.write_to_xml("keep_live.xml");
+        BGPNotification keepLive = new BGPNotification(BGPNotificationErrorCode.Cease, BGPNotificationSubErrorCode.ConnectionRejected);
+        keepLive.write_to_xml("notification.xml");
     }
 }
