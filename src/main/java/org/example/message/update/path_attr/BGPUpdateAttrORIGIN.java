@@ -6,10 +6,14 @@ import org.dom4j.Element;
 public class BGPUpdateAttrORIGIN implements BGPUpdatePathAttr{
 
     private final byte flags;   // default 0x40
+    private int type_code;  // default 0x01
+    private int length;
     private final int origin;   // 0: IGP, 1: EGP, 2: INCOMPLETE
 
     public BGPUpdateAttrORIGIN(byte flags, int origin) {
         this.flags = flags;
+        this.type_code = 0x01;
+        this.length = 1;
         this.origin = origin;
     }
     @Override
@@ -22,8 +26,8 @@ public class BGPUpdateAttrORIGIN implements BGPUpdatePathAttr{
         * */
         byte[] packet = new byte[4];
         packet[0] = flags;
-        packet[1] = (byte) 0x01;
-        packet[2] = (byte) 0x01;
+        packet[1] = (byte) type_code;
+        packet[2] = (byte) length;
         packet[3] = (byte) origin;
         return packet;
     }
@@ -32,8 +36,9 @@ public class BGPUpdateAttrORIGIN implements BGPUpdatePathAttr{
     public String to_string() {
         String result = "- Attr ORIGIN: \n";
         result += "  - flags: 0x" + Convert.toHex(new byte[] {flags}) + "\n";
-        result += "  - length: 0x" + Convert.toHex(new byte[] {(byte) 0x01}) + "\n";
-        result += "  - origin: 0x" + Convert.toHex(new byte[] {(byte) origin}) + "\n";
+        result += "  - type code: " + type_code + "\n";
+        result += "  - length: " + length + "\n";
+        result += "  - origin: " + origin + "\n";
         return result;
     }
 
@@ -41,8 +46,32 @@ public class BGPUpdateAttrORIGIN implements BGPUpdatePathAttr{
     public void set_xml(Element attr) {
         Element origin = attr.addElement("origin");
         origin.addElement("flags").addText("0x" + Convert.toHex(new byte[] {flags})).addAttribute("size", "1");
-        origin.addElement("type_code").addText(String.valueOf(1)).addAttribute("size", "1");
-        origin.addElement("length").addText(String.valueOf(1)).addAttribute("size", "1");
+        origin.addElement("type_code").addText(String.valueOf(type_code)).addAttribute("size", "1");
+        origin.addElement("length").addText(String.valueOf(length)).addAttribute("size", "1");
         origin.addElement("origin").addText(String.valueOf(this.origin)).addAttribute("size", "1");
+    }
+
+    public byte getFlags() {
+        return flags;
+    }
+
+    public int getType_code() {
+        return type_code;
+    }
+
+    public void setType_code(int type_code) {
+        this.type_code = type_code;
+    }
+
+    public int getLength() {
+        return length;
+    }
+
+    public void setLength(int length) {
+        this.length = length;
+    }
+
+    public int getOrigin() {
+        return origin;
     }
 }

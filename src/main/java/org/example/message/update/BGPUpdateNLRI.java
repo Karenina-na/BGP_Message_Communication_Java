@@ -4,8 +4,8 @@ import org.dom4j.Element;
 
 public class BGPUpdateNLRI {
 
-    private final int prefixLen;
-    private final String prefix;
+    private int prefixLen;
+    private String prefix;
 
     public BGPUpdateNLRI(int prefixLen, String prefix) {
         this.prefixLen = prefixLen;
@@ -37,5 +37,21 @@ public class BGPUpdateNLRI {
     public void set_xml(Element route) {
         route.addElement("prefix_len").addText(String.valueOf(prefixLen)).addAttribute("size", "1");
         route.addElement("prefix").addText(prefix).addAttribute("size", String.valueOf(prefixLen / 8));
+    }
+
+    public int getPrefixLen() {
+        return prefixLen;
+    }
+
+    public void setPrefixLen(int prefixLen) {
+        this.prefixLen = prefixLen;
+    }
+
+    public String getPrefix() {
+        return prefix;
+    }
+
+    public void setPrefix(String prefix) {
+        this.prefix = prefix;
     }
 }

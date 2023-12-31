@@ -9,28 +9,53 @@ import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 import org.example.message.BGPPkt;
 import org.example.message.update.path_attr.BGPUpdatePathAttr;
-
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
-import java.util.Objects;
 import java.util.Vector;
 
 public class BGPUpdate implements BGPPkt {
     private final String time;
     private final byte[] marker = new byte[16];
+    private int length;
+
+    private int type;
     private final boolean isWithdrawn;
+    private int withdrawnLen;
+    private int pathAttrLen;
     Vector<BGPUpdatePathAttr> pathAttr;
+    private int nlriLen;
     Vector<BGPUpdateNLRI> nlri;
 
-    public BGPUpdate(boolean isWithdrawn, Vector<BGPUpdatePathAttr> pathAttr, Vector<BGPUpdateNLRI> nlri) {
+    public BGPUpdate(boolean isWithdrawn, Vector<BGPUpdatePathAttr> pathAttr, Vector<BGPUpdateNLRI> nlris) {
         // if withdrawn, the nlri is withdrawn routes
+        this.type = 2;
         this.pathAttr = pathAttr == null ? new Vector<>() : pathAttr;
-        this.nlri = nlri == null ? new Vector<>() : nlri;
+        this.nlri = nlris == null ? new Vector<>() : nlris;
         this.isWithdrawn = isWithdrawn;
         for (int i = 0; i < 16; i++) {
             marker[i] = (byte) 0xff;
+        }
+        pathAttrLen = 0;
+        assert pathAttr != null;
+        for (BGPUpdatePathAttr attr : pathAttr) {
+            pathAttrLen += attr.build_packet().length;
+        }
+        nlriLen = 0;
+        assert nlris != null;
+        for (BGPUpdateNLRI nlri : nlris) {
+            nlriLen += nlri.build_packet().length;
+        }
+        withdrawnLen = 0;
+        if (isWithdrawn) {
+            // 计算withdrawnLen
+            for (BGPUpdateNLRI nlri : nlris) {
+                withdrawnLen += nlri.build_packet().length;
+            }
+            length = 23 + withdrawnLen + pathAttrLen;
+        } else {
+            length = 23 + nlriLen + pathAttrLen;
         }
         time = DateUtil.now();
     }
@@ -45,25 +70,7 @@ public class BGPUpdate implements BGPPkt {
         pathAttr: pathAttrLen bytes
         nlri: nlriLen bytes
         * */
-        int pathAttrLen = 0;
-        for (BGPUpdatePathAttr attr : pathAttr) {
-            pathAttrLen += attr.build_packet().length;
-        }
-        int nlriLen = 0;
-        for (BGPUpdateNLRI nlri : nlri) {
-            nlriLen += nlri.build_packet().length;
-        }
-        int length;
-        int withdrawnLen = 0;
-        if (isWithdrawn) {
-            // 计算withdrawnLen
-            for (BGPUpdateNLRI nlri : nlri) {
-                withdrawnLen += nlri.build_packet().length;
-            }
-            length = 23 + withdrawnLen + pathAttrLen;
-        } else {
-            length = 23 + nlriLen + pathAttrLen;
-        }
+
         byte[] packet = new byte[length];
 
         // marker  0xff * 16
@@ -72,7 +79,7 @@ public class BGPUpdate implements BGPPkt {
         packet[16] = (byte) (length >> 8);
         packet[17] = (byte) (length & 0xff);
         // type - update for 2
-        packet[18] = (byte) 0x02;
+        packet[18] = (byte) type;
         // withdrawnLen
         packet[19] = (byte) (withdrawnLen >> 8);
         packet[20] = (byte) (withdrawnLen & 0xff);
@@ -116,20 +123,14 @@ public class BGPUpdate implements BGPPkt {
     public String to_string() {
         String s = "UPDATE Message ====================== " + time + "\n";
         s += "Length: " + build_packet().length + "\n";
+        s += "Withdrawn Routes Length: " + withdrawnLen + "\n";
         if (isWithdrawn) {
-            s += "Withdrawn Routes Length: " + nlri.size() + "\n";
             s += "Withdrawn Routes: \n";
             StringBuilder sBuilder = new StringBuilder(s);
             for (BGPUpdateNLRI nlri : nlri) {
                 sBuilder.append(nlri.to_string());
             }
             s = sBuilder.toString();
-        } else {
-            s += "Withdrawn Routes Length: " + 0 + "\n";
-        }
-        int pathAttrLen = 0;
-        for (BGPUpdatePathAttr attr : pathAttr) {
-            pathAttrLen += attr.build_packet().length;
         }
         s += "Total Path Attributes Length: " + pathAttrLen + "\n";
         s += "Path Attributes: \n";
@@ -138,7 +139,6 @@ public class BGPUpdate implements BGPPkt {
             sBuilder.append(attr.to_string());
         }
         s = sBuilder.toString();
-
         if (isWithdrawn) {
             return s;
         }
@@ -158,24 +158,18 @@ public class BGPUpdate implements BGPPkt {
         Element root = document.addElement("bgp_update");
         // header
         Element header = root.addElement("header");
-        header.addElement("marker").addText(Convert.toHex(this.marker)).addAttribute("size", "16");
-        header.addElement("length").addText(String.valueOf(build_packet().length)).addAttribute("size", "2");
-        header.addElement("type").addText("2").addAttribute("size", "1");
+        header.addElement("marker").addText(Convert.toHex(marker)).addAttribute("size", "16");
+        header.addElement("length").addText(String.valueOf(length)).addAttribute("size", "2");
+        header.addElement("type").addText(String.valueOf(type)).addAttribute("size", "1");
         // body
         Element body = root.addElement("body");
+        body.addElement("withdrawn_len").addText(String.valueOf(withdrawnLen)).addAttribute("size", "2");
         if (isWithdrawn) {
-            body.addElement("withdrawn_len").addText(String.valueOf(nlri.size())).addAttribute("size", "2");
             Element withdrawn = body.addElement("withdrawn_routes");
             for (BGPUpdateNLRI nlri : nlri) {
                 Element nlriEle = withdrawn.addElement("withdrawn_route");
                 nlri.set_xml(nlriEle);
             }
-        } else {
-            body.addElement("withdrawn_len").addText(String.valueOf(0)).addAttribute("size", "2");
-        }
-        int pathAttrLen = 0;
-        for (BGPUpdatePathAttr attr : pathAttr) {
-            pathAttrLen += attr.build_packet().length;
         }
         body.addElement("total_path_attr_len").addText(String.valueOf(pathAttrLen)).addAttribute("size", "2");
         Element pathAttr = body.addElement("path_attr");
@@ -198,5 +192,57 @@ public class BGPUpdate implements BGPPkt {
         );
         writer.write(document);
         writer.close();
+    }
+
+    public byte[] getMarker() {
+        return marker;
+    }
+
+    public int getLength() {
+        return length;
+    }
+
+    public void setLength(int length) {
+        this.length = length;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    public int getWithdrawnLen() {
+        return withdrawnLen;
+    }
+
+    public void setWithdrawnLen(int withdrawnLen) {
+        this.withdrawnLen = withdrawnLen;
+    }
+
+    public int getPathAttrLen() {
+        return pathAttrLen;
+    }
+
+    public void setPathAttrLen(int pathAttrLen) {
+        this.pathAttrLen = pathAttrLen;
+    }
+
+    public Vector<BGPUpdatePathAttr> getPathAttr() {
+        return pathAttr;
+    }
+
+    public void setPathAttr(Vector<BGPUpdatePathAttr> pathAttr) {
+        this.pathAttr = pathAttr;
+    }
+
+    public Vector<BGPUpdateNLRI> getNlri() {
+        return nlri;
+    }
+
+    public void setNlri(Vector<BGPUpdateNLRI> nlri) {
+        this.nlri = nlri;
     }
 }
