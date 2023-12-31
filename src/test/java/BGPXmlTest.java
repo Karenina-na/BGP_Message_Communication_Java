@@ -122,7 +122,7 @@ public class BGPXmlTest {
 
     // check parser
     @Test
-    public void testOpenParser(){
+    public void testParser(){
         BGPXmlParser parser = new BGPXmlParser();
 
         file_name.forEach(file -> {
