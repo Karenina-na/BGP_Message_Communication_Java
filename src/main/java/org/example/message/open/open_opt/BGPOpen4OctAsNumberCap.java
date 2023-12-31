@@ -1,6 +1,5 @@
 package org.example.message.open.open_opt;
 
-import cn.hutool.core.convert.Convert;
 import org.dom4j.Element;
 
 public class BGPOpen4OctAsNumberCap extends BGPOpenOptAbc implements BGPOpenOpt {

@@ -1,6 +1,5 @@
 package org.example.message.open.open_opt;
 
-import cn.hutool.core.convert.Convert;
 import org.dom4j.Element;
 
 public class BGPOpenOptRouterRefreshCap extends BGPOpenOptAbc implements BGPOpenOpt {
