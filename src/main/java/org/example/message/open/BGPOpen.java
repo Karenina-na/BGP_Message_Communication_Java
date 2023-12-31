@@ -12,7 +12,6 @@ import org.example.message.BGPPkt;
 import org.example.message.open.open_opt.BGPOpenOpt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;

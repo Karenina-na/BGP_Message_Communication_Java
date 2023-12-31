@@ -5,27 +5,26 @@ import cn.hutool.core.date.DateUtil;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-import org.dom4j.QName;
 import org.dom4j.io.OutputFormat;
-import org.dom4j.io.SAXReader;
-import org.dom4j.io.SAXWriter;
 import org.dom4j.io.XMLWriter;
 import org.example.message.BGPPkt;
-import org.xml.sax.SAXException;
-
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.Objects;
 
 public class BGPKeepLive implements BGPPkt {
     private final String time;
 
-    private final byte[] marker = new byte[16];
+    private byte[] marker = new byte[16];
+    private int length;
+    private int type;
+
 
     public BGPKeepLive() {
         for (int i = 0; i < 16; i++) {
             marker[i] = (byte) 0xff;
         }
+        this.length = 19;
+        this.type = 4;
         time = DateUtil.now();
     }
 
@@ -40,10 +39,10 @@ public class BGPKeepLive implements BGPPkt {
         // marker  0xff * 16
         System.arraycopy(marker, 0, packet, 0, 16);
         // length   0x00 0x13
-        packet[16] = (byte) ((19) >> 8);
-        packet[17] = (byte) ((19) & 0xff);
+        packet[16] = (byte) (length >> 8);
+        packet[17] = (byte) (length & 0xff);
         // type - keep live for 4
-        packet[18] = (byte) 0x04;
+        packet[18] = (byte) type;
 
         return packet;
     }
@@ -51,7 +50,7 @@ public class BGPKeepLive implements BGPPkt {
     @Override
     public String to_string() {
         String s = "KeepLive Message ====================== " + time + "\n";
-        s += "Length: " + build_packet().length + "\n";
+        s += "Length: " + length + "\n";
         return s;
     }
 
@@ -63,8 +62,8 @@ public class BGPKeepLive implements BGPPkt {
         // header
         Element header = root.addElement("header");
         header.addElement("marker").addText(Convert.toHex(this.marker)).addAttribute("size", "16");
-        header.addElement("length").addText(String.valueOf(build_packet().length)).addAttribute("size", "2");
-        header.addElement("type").addText("4").addAttribute("size", "1");
+        header.addElement("length").addText(String.valueOf(length)).addAttribute("size", "2");
+        header.addElement("type").addText(String.valueOf(type)).addAttribute("size", "1");
         // body - none
 
         // write to file - resources
@@ -77,4 +76,27 @@ public class BGPKeepLive implements BGPPkt {
         writer.close();
     }
 
+    public byte[] getMarker() {
+        return marker;
+    }
+
+    public void setMarker(byte[] marker) {
+        this.marker = marker;
+    }
+
+    public int getLength() {
+        return length;
+    }
+
+    public void setLength(int length) {
+        this.length = length;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
 }

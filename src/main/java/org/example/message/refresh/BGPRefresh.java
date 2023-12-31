@@ -11,23 +11,26 @@ import org.example.BGPClient;
 import org.example.message.BGPPkt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
-import java.util.Objects;
 
 public class BGPRefresh implements BGPPkt {
     private final String time;
-    private final byte[] marker = new byte[16];
-    private final int afi;
-    private final int res;
-    private final int safi;
+    private byte[] marker = new byte[16];
+    private int length;
+
+    private int type;
+    private int afi;
+    private int res;
+    private int safi;
     protected static final Logger LOGGER = LoggerFactory.getLogger(BGPClient.class);
 
 
     public BGPRefresh(int afi, int safi) {  // default res = 0, afi = 1, safi = 1
+        this.length = 23;
+        this.type = 5;
         this.afi = afi;
         this.safi = safi;
         this.res = 0;   // reserved
@@ -51,10 +54,10 @@ public class BGPRefresh implements BGPPkt {
         // marker  0xff * 16
         System.arraycopy(marker, 0, packet, 0, 16);
         // length   23
-        packet[16] = (byte) 0x00;
-        packet[17] = (byte) 0x17;
+        packet[16] = (byte) (length >> 8);
+        packet[17] = (byte) (length & 0xff);
         // type - refresh for 5
-        packet[18] = (byte) 0x05;
+        packet[18] = (byte) type;
         // afi
         packet[19] = (byte) ((afi >> 8) & 0xff);
         packet[20] = (byte) (afi & 0xff);
@@ -69,7 +72,7 @@ public class BGPRefresh implements BGPPkt {
     @Override
     public String to_string() {
         String s = "REFRESH Message ====================== " + time + "\n";
-        s += "Length: " + build_packet().length + "\n";
+        s += "Length: " + length + "\n";
         s += "Address Family Identifier: " + afi + "\n";
         s += "Subsequent Address Family Identifier: " + safi + "\n";
         return s;
@@ -83,8 +86,8 @@ public class BGPRefresh implements BGPPkt {
         // header
         Element header = root.addElement("header");
         header.addElement("marker").addText(Convert.toHex(this.marker)).addAttribute("size", "16");
-        header.addElement("length").addText(String.valueOf(build_packet().length)).addAttribute("size", "2");
-        header.addElement("type").addText("5").addAttribute("size", "1");
+        header.addElement("length").addText(String.valueOf(length)).addAttribute("size", "2");
+        header.addElement("type").addText(String.valueOf(type)).addAttribute("size", "1");
         // body
         Element body = root.addElement("body");
         body.addElement("afi").addText(String.valueOf(afi)).addAttribute("size", "2");
@@ -99,5 +102,53 @@ public class BGPRefresh implements BGPPkt {
         );
         writer.write(document);
         writer.close();
+    }
+
+    public byte[] getMarker() {
+        return marker;
+    }
+
+    public void setMarker(byte[] marker) {
+        this.marker = marker;
+    }
+
+    public int getLength() {
+        return length;
+    }
+
+    public void setLength(int length) {
+        this.length = length;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    public int getAfi() {
+        return afi;
+    }
+
+    public void setAfi(int afi) {
+        this.afi = afi;
+    }
+
+    public int getRes() {
+        return res;
+    }
+
+    public void setRes(int res) {
+        this.res = res;
+    }
+
+    public int getSafi() {
+        return safi;
+    }
+
+    public void setSafi(int safi) {
+        this.safi = safi;
     }
 }

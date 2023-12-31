@@ -8,22 +8,25 @@ import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 import org.example.message.BGPPkt;
-
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
-import java.util.Objects;
 
 public class BGPNotification implements BGPPkt {
     private final String time;
     private final byte[] marker = new byte[16];
+    private int length;
+
+    private int type;
     private final BGPNotificationErrorCode major_error_code;
     private final BGPNotificationSubErrorCode minor_error_code;
 
     public BGPNotification(BGPNotificationErrorCode majorErrorCode, BGPNotificationSubErrorCode minorErrorCode) {
         major_error_code = majorErrorCode;
         minor_error_code = minorErrorCode;
+        length = 21;
+        type = 3;
         for (int i = 0; i < 16; i++) {
             marker[i] = (byte) 0xff;
         }
@@ -43,10 +46,10 @@ public class BGPNotification implements BGPPkt {
         // marker  0xff * 16
         System.arraycopy(marker, 0, packet, 0, 16);
         // length   0x00 0x13
-        packet[16] = (byte) ((21) >> 8);
-        packet[17] = (byte) ((21) & 0xff);
+        packet[16] = (byte) (length >> 8);
+        packet[17] = (byte) (length & 0xff);
         // type - notification for 3
-        packet[18] = (byte) 0x03;
+        packet[18] = (byte) type;
         // major error code
         packet[19] = (byte) major_error_code.getValue();
         // minor error code
@@ -58,7 +61,7 @@ public class BGPNotification implements BGPPkt {
     @Override
     public String to_string() {
         String s = "Notification Message ====================== " + time + "\n";
-        s += "Length: " + build_packet().length + "\n";
+        s += "Length: " + length + "\n";
         s += "Major error code: " + major_error_code + " (" + major_error_code.getValue() + ")" + "\n";
         s += "Minor error code: " + minor_error_code + " (" + minor_error_code.getValue() + ")" + "\n";
         return s;
@@ -72,8 +75,8 @@ public class BGPNotification implements BGPPkt {
         // header
         Element header = root.addElement("header");
         header.addElement("marker").addText(Convert.toHex(this.marker)).addAttribute("size", "16");
-        header.addElement("length").addText(String.valueOf(build_packet().length)).addAttribute("size", "2");
-        header.addElement("type").addText("3").addAttribute("size", "1");
+        header.addElement("length").addText(String.valueOf(length)).addAttribute("size", "2");
+        header.addElement("type").addText(String.valueOf(type)).addAttribute("size", "1");
         // body
         Element body = root.addElement("body");
         body.addElement("major_error_code").addText(String.valueOf(major_error_code.getValue())).addAttribute("size", "1");
@@ -87,5 +90,33 @@ public class BGPNotification implements BGPPkt {
         );
         writer.write(document);
         writer.close();
+    }
+
+    public byte[] getMarker() {
+        return marker;
+    }
+
+    public int getLength() {
+        return length;
+    }
+
+    public void setLength(int length) {
+        this.length = length;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    public BGPNotificationErrorCode getMajor_error_code() {
+        return major_error_code;
+    }
+
+    public BGPNotificationSubErrorCode getMinor_error_code() {
+        return minor_error_code;
     }
 }
