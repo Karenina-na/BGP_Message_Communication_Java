@@ -3,7 +3,14 @@ package org.example.message.open.open_opt;
 import cn.hutool.core.convert.Convert;
 import org.dom4j.Element;
 
-public class BGPOpenOptRouterRefreshCap implements BGPOpenOpt{
+public class BGPOpenOptRouterRefreshCap extends BGPOpenOptAbc implements BGPOpenOpt {
+
+    public BGPOpenOptRouterRefreshCap() {
+        this.paramType = 2;
+        this.paramLen = 2;
+        this.capabilityCode = 2;
+        this.capabilityLen = 0;
+    }
     @Override
     public byte[] build_packet() {
         /*
@@ -14,23 +21,23 @@ public class BGPOpenOptRouterRefreshCap implements BGPOpenOpt{
         * */
         byte[] packet = new byte[4];
         // type code
-        packet[0] = (byte) 0x02;
+        packet[0] = (byte) this.paramType;
         // length
-        packet[1] = (byte) 0x02;
+        packet[1] = (byte) this.paramLen;
         // type
-        packet[2] = (byte) 0x02;
+        packet[2] = (byte) this.capabilityCode;
         // length
-        packet[3] = (byte) 0x00;
+        packet[3] = (byte) this.capabilityLen;
 
         return packet;
     }
 
     @Override
     public String to_string() {
-        String result = "- Opt Param: Capability (" + 0x02 + ")\n";
-        result += "  - type code: 0x" + Convert.toHex(new byte[] {(byte) 0x02}) + "\n";
-        result += "  - length: 0x" + Convert.toHex(new byte[] {(byte) 0x02}) + "\n";
-        result += "  - capability: Route Refresh (" + 0x02 + ")\n";
+        String result = "- Opt Param: Capability (" + this.paramType + ")\n";
+        result += "  - length: " + this.paramLen + "\n";
+        result += "  - capability: Route Refresh (" + this.capabilityCode + ")\n";
+        result += "    - length: " + capabilityLen + "\n";
         return result;
     }
 
@@ -38,11 +45,11 @@ public class BGPOpenOptRouterRefreshCap implements BGPOpenOpt{
     public void set_xml(Element opt) {
         // opt - Capability
         Element capability = opt.addElement("Capability");
-        capability.addElement("type").addText("2").addAttribute("size", "1");
-        capability.addElement("length").addText("2").addAttribute("size", "1");
+        capability.addElement("type").addText(String.valueOf(this.paramType)).addAttribute("size", "1");
+        capability.addElement("length").addText(String.valueOf(this.paramLen)).addAttribute("size", "1");
         // capability - Route Refresh
         Element route_refresh = capability.addElement("RouteRefresh");
-        route_refresh.addElement("type").addText("2").addAttribute("size", "1");
-        route_refresh.addElement("length").addText("0").addAttribute("size", "1");
+        route_refresh.addElement("type").addText(String.valueOf(this.capabilityCode)).addAttribute("size", "1");
+        route_refresh.addElement("length").addText(String.valueOf(this.capabilityLen)).addAttribute("size", "1");
     }
 }

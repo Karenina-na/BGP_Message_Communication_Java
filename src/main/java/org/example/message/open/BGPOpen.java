@@ -17,28 +17,40 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
-import java.util.Objects;
 import java.util.Vector;
 
 public class BGPOpen implements BGPPkt {
     private final String time;
-    private final byte[] marker = new byte[16];
-    private final int version;
-    private final int asn;
-    private final int holdTime;
-    private final String id;
-    private final Vector<BGPOpenOpt> optPara;
+    private byte[] marker = new byte[16];
+    private int length;
+
+    private int type;
+    private int version;
+    private int asn;
+    private int holdTime;
+    private String id;
+    private int optLen;
+    private Vector<BGPOpenOpt> optPara;
     protected static final Logger LOGGER = LoggerFactory.getLogger(BGPClient.class);
 
     public BGPOpen(int version, int asn, int holdTime, String id, Vector<BGPOpenOpt> optPara) {
+        for (int i = 0; i < 16; i++) {
+            marker[i] = (byte) 0xff;
+        }
+        int optLen = 0;
+        if (optPara != null) {
+            for (BGPOpenOpt opt : optPara) {
+                optLen += opt.build_packet().length;
+            }
+        }
+        this.optLen = optLen;
+        this.length = 29 + optLen;
+        this.type = 1;
         this.version = version;
         this.asn = asn;
         this.holdTime = holdTime;
         this.id = id;
         this.optPara = optPara;
-        for (int i = 0; i < 16; i++) {
-            marker[i] = (byte) 0xff;
-        }
         time = DateUtil.now();
     }
 
@@ -54,20 +66,14 @@ public class BGPOpen implements BGPPkt {
         id: 4 bytes
         optLen: 1 byte
         * */
-        int optLen = 0;
-        if (optPara != null) {
-            for (BGPOpenOpt opt : optPara) {
-                optLen += opt.build_packet().length;
-            }
-        }
         byte[] packet = new byte[29 + optLen];
         // marker  0xff * 16
         System.arraycopy(marker, 0, packet, 0, 16);
         // length   0x00 0x1d + optLen
-        packet[16] = (byte) ((29 + optLen) >> 8);
-        packet[17] = (byte) ((29 + optLen) & 0xff);
+        packet[16] = (byte) (length >> 8);
+        packet[17] = (byte) (length & 0xff);
         // type - open for 1
-        packet[18] = (byte) 0x01;
+        packet[18] = (byte) type;
         // version  default 4
         packet[19] = (byte) version;
         // asn
@@ -104,12 +110,6 @@ public class BGPOpen implements BGPPkt {
         s += "ASN: " + asn + "\n";
         s += "Hold Time: " + holdTime + "\n";
         s += "ID: " + id + "\n";
-        int optLen = 0;
-        if (optPara != null) {
-            for (BGPOpenOpt opt : optPara) {
-                optLen += opt.build_packet().length;
-            }
-        }
         s += "Optional Parameters Length Len: " + optLen + "\n";
         s += "Optional Parameters: \n";
         if (optLen != 0) {
@@ -130,20 +130,14 @@ public class BGPOpen implements BGPPkt {
         // header
         Element header = root.addElement("header");
         header.addElement("marker").addText(Convert.toHex(this.marker)).addAttribute("size", "16");
-        header.addElement("length").addText(String.valueOf(build_packet().length)).addAttribute("size", "2");
-        header.addElement("type").addText("1").addAttribute("size", "1");
+        header.addElement("length").addText(String.valueOf(this.length)).addAttribute("size", "2");
+        header.addElement("type").addText(String.valueOf(this.type)).addAttribute("size", "1");
         // body
         Element body = root.addElement("body");
         body.addElement("version").addText(String.valueOf(version)).addAttribute("size", "1");
         body.addElement("asn").addText(String.valueOf(asn)).addAttribute("size", "2");
         body.addElement("hold_time").addText(String.valueOf(holdTime)).addAttribute("size", "2");
         body.addElement("id").addText(id).addAttribute("size", "4");
-        int optLen = 0;
-        if (optPara != null) {
-            for (BGPOpenOpt opt : optPara) {
-                optLen += opt.build_packet().length;
-            }
-        }
         body.addElement("opt_len").addText(String.valueOf(optLen)).addAttribute("size", "1");
         Element opt = body.addElement("opt");
         if (optLen != 0) {
@@ -160,5 +154,77 @@ public class BGPOpen implements BGPPkt {
         );
         writer.write(document);
         writer.close();
+    }
+
+    public byte[] getMarker() {
+        return marker;
+    }
+
+    public void setMarker(byte[] marker) {
+        this.marker = marker;
+    }
+
+    public int getLength() {
+        return length;
+    }
+
+    public void setLength(int length) {
+        this.length = length;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
+    }
+
+    public int getAsn() {
+        return asn;
+    }
+
+    public void setAsn(int asn) {
+        this.asn = asn;
+    }
+
+    public int getHoldTime() {
+        return holdTime;
+    }
+
+    public void setHoldTime(int holdTime) {
+        this.holdTime = holdTime;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public int getOptLen() {
+        return optLen;
+    }
+
+    public void setOptLen(int optLen) {
+        this.optLen = optLen;
+    }
+
+    public Vector<BGPOpenOpt> getOptPara() {
+        return optPara;
+    }
+
+    public void setOptPara(Vector<BGPOpenOpt> optPara) {
+        this.optPara = optPara;
     }
 }
