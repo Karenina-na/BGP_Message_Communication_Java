@@ -19,16 +19,26 @@ public class BGPXmlParser implements BGPParser{
 
     // 解析器
     public BGPPkt parse(String path) throws DocumentException {
+        return parse(path, true);
+    }
+
+    // 解析器 -- 重载
+    public BGPPkt parse(String path, boolean valid) throws  DocumentException{
         SAXReader reader = new SAXReader();
         Element root = reader.read(path).getRootElement();
+
         // header
         Element header = root.element("header");
         Element marker = header.element("marker");
-        boolean check = check(marker.getText().strip());
-        if (!check) {
-            LOGGER.error("Marker error");
-            return null;
+
+        if (valid){ //  check marker
+            boolean check = check(marker.getText().strip());
+            if (!check) {
+                LOGGER.error("Marker error");
+                return null;
+            }
         }
+
         Element length = header.element("length");
         Element type = header.element("type");
 
@@ -63,10 +73,13 @@ public class BGPXmlParser implements BGPParser{
         }
 
         // check length
-        if (pkt.build_packet().length != Integer.parseInt(length.getText().strip())) {
-            LOGGER.error("Length error");
-            return null;
+        if (valid){
+            if (pkt.build_packet().length != Integer.parseInt(length.getText().strip())) {
+                LOGGER.error("Length error");
+                return null;
+            }
         }
+
         return pkt;
     }
 
