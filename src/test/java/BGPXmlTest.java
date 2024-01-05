@@ -127,7 +127,7 @@ public class BGPXmlTest {
 
         file_name.forEach(file -> {
             try {
-                BGPPkt pkt = parser.parse(path + "/" + file);
+                BGPPkt pkt = parser.parse(path + "/" + file, true);
                 switch (file_name.indexOf(file)){
                     case 0: {
                         assert Arrays.equals(pkt.build_packet(), bgp_op.build_packet());

@@ -30,7 +30,7 @@ public class BGPOpen implements BGPPkt {
     private String id;
     private int optLen;
     private Vector<BGPOpenOpt> optPara;
-    protected static final Logger LOGGER = LoggerFactory.getLogger(BGPClient.class);
+    protected static final Logger LOGGER = LoggerFactory.getLogger(BGPOpen.class);
 
     public BGPOpen(int version, int asn, int holdTime, String id, Vector<BGPOpenOpt> optPara) {
         for (int i = 0; i < 16; i++) {

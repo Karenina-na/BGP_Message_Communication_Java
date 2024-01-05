@@ -18,9 +18,19 @@ public class BGPXmlParser implements BGPParser{
     protected static final Logger LOGGER = LoggerFactory.getLogger(BGPXmlParser.class);
 
     // 解析器
-    public BGPPkt parse(String path) throws DocumentException {
+    public BGPPkt parse(String path, boolean valid) throws DocumentException {
+        if (valid) {
+            return parse_valid(path);
+        } else {
+            return parse_invalid(path);
+        }
+    }
+
+    // 解析器 -- 合法
+    public BGPPkt parse_valid(String path) throws  DocumentException{
         SAXReader reader = new SAXReader();
         Element root = reader.read(path).getRootElement();
+
         // header
         Element header = root.element("header");
         Element marker = header.element("marker");
@@ -29,6 +39,7 @@ public class BGPXmlParser implements BGPParser{
             LOGGER.error("Marker error");
             return null;
         }
+
         Element length = header.element("length");
         Element type = header.element("type");
 
@@ -67,7 +78,13 @@ public class BGPXmlParser implements BGPParser{
             LOGGER.error("Length error");
             return null;
         }
+
         return pkt;
+    }
+
+    // 解析器 -- 不合法
+    public BGPPkt parse_invalid(String path) throws DocumentException {
+        return null;
     }
 
     // check packet
